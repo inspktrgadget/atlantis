@@ -1,12 +1,9 @@
 ## this code is exactly the same as initdb.R in the initdb directory
 ## just without the mfdb import lines.
 library(plyr)
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 library(mfdb)
 library(mfdbatlantis)
-library(utils)
-library(magrittr)
 
 setwd('~/gadget/models/atlantis')
 # source files for both functions and outside data
