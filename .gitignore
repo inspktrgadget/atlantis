@@ -27,7 +27,7 @@ haddock/simModel/
 haddock/setup/setupSim/
 OutM45BioV158FMV79_PF
 ideas
-cod/codSpawn/
+cod/codSpawn/codSpawnModel
 cod/codSpawnTemp/
 cod/rmFiles.sh
 varTest/bootstrapRun
