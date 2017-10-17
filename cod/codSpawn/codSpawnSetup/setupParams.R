@@ -29,8 +29,8 @@ read.gadget.parameters(sprintf('%s/params.out', gd$dir)) %>%
     init.params('cod.spawn.m', 0.1, 0, 1, 1) %>%
     init.params('wl.alpha', -0.5, -999, 0, 1) %>%
     init.params('wl.l50', 50, -200, 200, 1) %>%
-    init.params('bh.mu', 1e+09, 1e+08, 1e+10, 1) %>%
-    init.params('bh.lam', 1e+06, 0, 3e+09, 1) %>%
+    init.params('bh.mu', 4e+08, 1e+08, 1e+09, 1) %>%
+    init.params('bh.lam', 1.067416e+08, 0, 3e+09, 1) %>%
     init.params('comm.alpha', 0.046, 0.001, 3, 1) %>%
     init.params('comm.l50', 66, 5, 120, 1) %>%
     write.gadget.parameters(.,file=sprintf('%s/params.in', gd$dir))

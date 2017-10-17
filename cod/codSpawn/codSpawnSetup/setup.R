@@ -1,13 +1,12 @@
 ## general setup for gadget models
 library(plyr)
-library(dplyr)
 library(mfdb)
 library(Rgadget)
 
 
 setwd('/home/pfrater/gadget/models/atlantis')
 source('../functions/gadgetUtils.R')
-setup.d <- 'cod/codSpawnSetup'
+setup.d <- 'cod/codSpawn/codSpawnSetup'
 
 # connect to mfdb database
 mdb <- mfdb('atlantis_constsurv_001')

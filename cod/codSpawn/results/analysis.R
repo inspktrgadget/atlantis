@@ -7,11 +7,10 @@
 #source('~/R/rgadget/trunk/function.R')
 
 library(plyr)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(grid)
 library(Rgadget)
-setwd('~/gadget/models/atlantis/cod/codVersions/codMod65')
+setwd('~/gadget/models/atlantis/cod/codVersions/codSpawn6')
 fit <- gadget.fit(wgts="WGTS", main.file='WGTS/main.final',
                   fleet.predict = data.frame(fleet = 'comm', ratio=1),
                   mat.par=c(-6.510198, 1.108594),
@@ -179,8 +178,8 @@ aldist.catch <-
 
 # plot suitability against length for both survey and commercial fleets
 selection.plot <-
-    ggplot(fit$suitability,
-           aes(l,suit,lty=fleet)) +
+    ggplot(filter(fit$suitability, suit > 0),
+           aes(x=length,y=suit,lty=fleet, color = factor(year))) +
     geom_line() +
     theme_bw() + ylab('Suitability') + xlab('Length') +
     theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
@@ -197,13 +196,19 @@ gr.plot <-
           plot.margin = unit(c(0,0,0,0),'cm'))
 
 
-# plot recruitment of stock by year
-rec.plot <-
-    ggplot(fit$res.by.year,aes(year,recruitment/1e6)) +
-    geom_bar(stat='identity') +
-    ylab("Recruitment (in millions)") + xlab('Year') +  theme_bw() +
-    theme(legend.position = c(0.25,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) 
+# plot spawning function
+mu <- fit$params$value[grep("bh.mu", fit$params$switch)]
+lam <- fit$params$value[grep("bh.lam", fit$params$switch)]
+bevHolt <- function(mu, lambda, x) {return((mu * x) / (lambda + x))}
+bevHoltAtl <- function(mu, lambda, x) {
+    lam <- ((lambda / 0.267) * 20 * 5.7 / 1e6)
+    return((mu * x) / (lam + x))}
+spawn.plot <-
+    ggplot(data=fit$res.by.year, aes(x=ssb)) + 
+    stat_function(fun = bevHolt, args = list(mu = mu, lambda = lam)) + 
+    stat_function(fun = bevHoltAtl, 
+                  args = list(mu = 4e8, lambda = 2.5e11), color = "red") +
+    theme_bw() + xlab("SSB") + ylab("Recruitment")
 
 # plotting the catch by year
 catch.plot <- 
@@ -243,7 +248,7 @@ ssb.plot <-
           plot.margin = unit(c(0,0,0,0),'cm'))
 
 f.plot <- 
-    ggplot(fit$res.by.year, aes(year, F)) + 
+    ggplot(filter(fit$res.by.year, stock == "cod"), aes(year, F)) + 
     geom_line() + 
     ylab("F") + xlab("Year") +  theme_bw() +
     theme(legend.position=c(0.2, 0.8), legend.title = element_blank(),
@@ -258,7 +263,7 @@ init.vals <-
     xlab('Age') + ylab('Numbers (millions)') + theme_bw()
 
 params.plot <- 
-    ggplot(data=fit$params[-grep('rec.[0-9]', fit$params$switch), ],
+    ggplot(data=fit$params,
            aes(x=switch, y=value)) + geom_point() +
     geom_errorbar(aes(ymin=lower, ymax=upper), width = 0.1) + 
     facet_wrap(~switch, scales='free') + theme_bw() +

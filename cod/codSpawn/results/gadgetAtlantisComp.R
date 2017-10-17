@@ -1,8 +1,6 @@
-library(tidyr)
 library(mfdb)
 library(mfdbatlantis)
-library(utils)
-library(magrittr)
+library(tidyverse)
 setwd('~/gadget/models/atlantis')
 gadget_st_year <- 1983
 
@@ -76,12 +74,12 @@ bm.scale.diff.plot <-
 #######################################
 cod.numbers <- 
     is_fg_count %>% 
-    filter(month == 9) %>%
+    filter(month == 4) %>%
     group_by(year) %>% 
     summarize(atl.number = sum(count))
 gad.numbers <- 
     fit$stock.std %>%
-    filter(step == 3) %>%
+    filter(step == 1) %>%
     group_by(year) %>%
     summarize(total.number = sum(number))
 atl.gad.numbers <- 
