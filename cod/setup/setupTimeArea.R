@@ -12,8 +12,8 @@ gadgetfile('time',
     write.gadget.file(gd$dir)
 
 gadget_areafile(
-    size = mfdb_area_size(mdb, defaults)[[1]],
-    temperature = mfdb_temperature(mdb, defaults)[[1]]) %>%
+    size = mfdb_area_size(mdb, model.defaults)[[1]],
+    temperature = mfdb_temperature(mdb, model.defaults)[[1]]) %>%
     gadget_dir_write(gd, .)
 
 file.copy(paste(getwd(), gd$dir, 'Modelfiles/area', sep='/'), 

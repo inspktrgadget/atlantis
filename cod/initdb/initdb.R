@@ -20,7 +20,7 @@ source('functions/stripFleetAges.R')
 source('cod/initdb/getCodLengthVar.R') # source cod length sd at age group
 
 # mfdb('atlantis_constSurvey_0.001', destroy_schema=T)
-mdb <- mfdb('atlantis_constsurv_001')
+mdb <- mfdb('atlantis_logisticsurvey')
 
 # read in dir and options
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
@@ -109,7 +109,7 @@ is_fg_survey <- smooth.len[
                                   "SprSurveyTotals",
                                   "AutSurveyTotals")) %>%
     atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
-    atlantis_tracer_survey_select(length_group, rep(0.001, length(length_group)), survey_sigma) 
+    atlantis_tracer_survey_select(length_group, survey_suitability, survey_sigma) 
 
 survey <- filter(is_fg_survey, count >= 1)
 survey$species <- fg_group$MfdbCode

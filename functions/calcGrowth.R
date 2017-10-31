@@ -13,9 +13,9 @@ vbMin <-
     atl.sub %>%
     mutate(age = age + 0.5) %>%
     group_by(year, month) %>%
-    summarize(linf = nlm(vb.sse, c(100, 0.1, -1), length, age)$estimate[1],
-              k = nlm(vb.sse, c(100, 0.1, -1), length, age)$estimate[2],
-              t0 = nlm(vb.sse, c(100, 0.1, -1), length, age)$estimate[3])
+    summarize(linf = nlm(vb_sse, c(100, 0.1, -1), length, age)$estimate[1],
+              k = nlm(vb_sse, c(100, 0.1, -1), length, age)$estimate[2],
+              t0 = nlm(vb_sse, c(100, 0.1, -1), length, age)$estimate[3])
 
 vbSimpleMin <- 
     atl.sub %>%

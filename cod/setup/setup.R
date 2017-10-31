@@ -10,7 +10,7 @@ source('../functions/gadgetUtils.R')
 setup.d <- 'cod/setup'
 
 # connect to mfdb database
-mdb <- mfdb('atlantis_constsurv_001')
+mdb <- mfdb('atlantis_logisticsurvey')
 
 # fetch defaults
 source(sprintf('%s/setupDefaults.R', setup.d))

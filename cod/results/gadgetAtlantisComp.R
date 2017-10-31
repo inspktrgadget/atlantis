@@ -1,9 +1,8 @@
-library(tidyr)
+#  library(tidyverse)
 library(mfdb)
 library(mfdbatlantis)
-library(utils)
-library(magrittr)
-setwd('~/gadget/models/atlantis')
+
+# setwd('~/gadget/models/atlantis')
 gadget_st_year <- 1983
 
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
@@ -67,6 +66,64 @@ bm.scale.diff.plot <-
     geom_line() + geom_hline(yintercept = 1, linetype='dashed') + 
     ylim(0,pmax(1.5, max(atl.gad.biomass$scale.diff, na.rm=T))) +
     theme_bw() + xlab('Year') + ylab('Relative difference in biomass') + 
+    theme(axis.text = element_text(size = 15),
+          axis.title = element_text(size = 17),
+          legend.text = element_text(size = 15))
+
+#########################
+# SSB
+#########################
+atl.ssb <- 
+    is_fg_count %>%
+    filter(count >= 1, age >= 4, month == 3) %>%
+    group_by(year, age) %>%
+    summarize(atl.ssb = sum((weight / 1e3) * count))
+
+gad.ssb <- 
+    fit$stock.std %>%
+    filter(age >= 4, step == 1) %>%
+    mutate(age = age - (age %% 2)) %>%
+    group_by(year, age) %>%
+    summarize(gad.ssb = sum(number * mean.weight))
+
+atl.gad.ssb <- 
+    left_join(gad.ssb, atl.ssb)
+
+# total ssb
+ssb <- 
+    atl.gad.ssb %>%
+    group_by(year) %>%
+    summarize(gad.ssb = sum(gad.ssb),
+              atl.ssb = sum(atl.ssb))
+
+ssb.plot <- 
+    ggplot(data=ssb, aes(x=year)) + 
+    geom_line(aes(y=gad.ssb/1e6, color = "gadget")) + 
+    geom_line(aes(y=atl.ssb/1e6, color = "atlantis")) +
+    xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() +
+    scale_color_manual("",
+                       breaks = c("gadget", "atlantis"),
+                       values = c("gadget" = "black",
+                                  "atlantis" = "red"),
+                       labels = c("gadget" = "Gadget",
+                                  "atlantis" = "Atlantis")) + 
+    theme(axis.text = element_text(size = 15),
+          axis.title = element_text(size = 17),
+          legend.text = element_text(size = 15))
+
+
+# ssb by age
+ssb.age.plot <- 
+    ggplot(data=atl.gad.ssb, aes(x=year)) + 
+    geom_line(aes(y=gad.ssb / 1e6, color = "gadget")) + 
+    geom_line(aes(y=atl.ssb / 1e6, color = "atlantis")) + facet_wrap(~age, scales = "free_y") +
+    xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() + 
+    scale_color_manual("",
+                       breaks = c("gadget", "atlantis"),
+                       values = c("gadget" = "black",
+                                  "atlantis" = "red"),
+                       labels = c("gadget" = "Gadget",
+                                  "atlantis" = "Atlantis")) + 
     theme(axis.text = element_text(size = 15),
           axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
@@ -181,6 +238,7 @@ step.age.numbers.plot <-
     facet_wrap(~age, scales='free_y') + 
     scale_color_manual('', breaks=c('Gadget', 'Atlantis'), 
                        values=c('red', 'black')) +
+    scale_linetype_discrete(name = "Gadget Timestep") + 
     theme_bw() + xlab('Year') + ylab('Numbers (millions of fish)') + 
     theme(axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))

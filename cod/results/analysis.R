@@ -7,11 +7,10 @@
 #source('~/R/rgadget/trunk/function.R')
 
 library(plyr)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(grid)
 library(Rgadget)
-setwd('~/gadget/models/atlantis/cod/codVersions/codMod65')
+setwd('~/gadget/models/atlantis/cod/codVersions/codMod72')
 fit <- gadget.fit(wgts="WGTS", main.file='WGTS/main.final',
                   fleet.predict = data.frame(fleet = 'comm', ratio=1),
                   mat.par=c(-6.510198, 1.108594),
@@ -179,8 +178,8 @@ aldist.catch <-
 
 # plot suitability against length for both survey and commercial fleets
 selection.plot <-
-    ggplot(fit$suitability,
-           aes(l,suit,lty=fleet)) +
+    ggplot(filter(fit$suitability, suit > 0),
+           aes(length,suit,lty=fleet, color=stock)) +
     geom_line() +
     theme_bw() + ylab('Suitability') + xlab('Length') +
     theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
@@ -243,11 +242,22 @@ ssb.plot <-
           plot.margin = unit(c(0,0,0,0),'cm'))
 
 f.plot <- 
-    ggplot(fit$res.by.year, aes(year, F)) + 
+    ggplot(filter(fit$res.by.year, stock == "cod"), aes(year, F)) + 
     geom_line() + 
     ylab("F") + xlab("Year") +  theme_bw() +
     theme(legend.position=c(0.2, 0.8), legend.title = element_blank(),
           plot.margin = unit(c(0,0,0,0),'cm'))
+
+f.by.age <- 
+    fit$stock.prey %>%
+    filter(stock == "cod") %>%
+    group_by(stock, year, age) %>%
+    summarize(f = mean(mortality))
+
+f.by.age.plot <- 
+    ggplot(f.by.age, aes(x=year, y=f)) + 
+    geom_line() + facet_wrap(~age) +
+    xlab("Year") + ylab("F") + theme_bw()
 
 ## basic plots to check parameters, initial values, and
 ## natural mortality (if estimated)
