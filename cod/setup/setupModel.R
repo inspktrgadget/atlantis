@@ -62,15 +62,17 @@ cod0 <-
                                      alpha=weight.alpha,
                                      beta=weight.beta),
                   beta=sprintf('(* 10 #%s.bbin)', species.name)) %>%
+    gadget_update("naturalmortality", # fixed m
+                   c(0.3, 0.25)) %>%
     # gadget_update('naturalmortality', # m for each age
     #               sprintf('#%1$s.age%2$s.m', 
     #                       species.name, 
     #                       .[[1]]$minage:.[[1]]$maxage)) %>%
-    gadget_update('naturalmortality', # m as a function of age
-                  m.estimate.formula(age=.[[1]]$minage:.[[1]]$maxage,
-                                     m=sprintf('%s.m.decay', species.name),
-                                     max.m=sprintf('%s.max.m', species.name),
-                                     min.m=sprintf('%s.min.m', species.name))) %>%
+    # gadget_update('naturalmortality', # m as a function of age
+    #               m.estimate.formula(age=.[[1]]$minage:.[[1]]$maxage,
+    #                                  m=sprintf('%s.m.decay', species.name),
+    #                                  max.m=sprintf('%s.max.m', species.name),
+    #                                  min.m=sprintf('%s.min.m', species.name))) %>%
     gadget_update('initialconditions',
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
@@ -130,7 +132,7 @@ cod <-
     gadgetstock('cod', gd$dir, missingOkay=T) %>%
     gadget_update('stock',
                   minage = 2,
-                  maxage = 19,
+                  maxage = 12,
                   minlength = 1,
                   maxlength = 199,
                   dl = 5,
@@ -141,15 +143,17 @@ cod <-
                                      alpha=weight.alpha,
                                      beta=weight.beta),
                   beta=sprintf('(* 10 #%s.bbin)', .[[1]]$stockname)) %>%
+    gadget_update("naturalmortality", 
+                  rep(0.2, ((.[[1]]$maxage - .[[1]]$minage) + 1)))
     # gadget_update('naturalmortality', # m for each age
     #               sprintf('#%1$s.age%2$s.m', 
     #                       .[[1]]$stockname, 
     #                       .[[1]]$minage:.[[1]]$maxage)) %>%
-    gadget_update('naturalmortality', # m as a function of age
-                  m.estimate.formula(age=.[[1]]$minage:.[[1]]$maxage,
-                                     m=sprintf('%s.m.decay', .[[1]]$stockname),
-                                     max.m=sprintf('%s.max.m', .[[1]]$stockname),
-                                     min.m=sprintf('%s.min.m', .[[1]]$stockname))) %>%
+    # gadget_update('naturalmortality', # m as a function of age
+    #               m.estimate.formula(age=.[[1]]$minage:.[[1]]$maxage,
+    #                                  m=sprintf('%s.m.decay', .[[1]]$stockname),
+    #                                  max.m=sprintf('%s.max.m', .[[1]]$stockname),
+    #                                  min.m=sprintf('%s.min.m', .[[1]]$stockname))) %>%
     gadget_update('initialconditions',
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
@@ -167,9 +171,7 @@ cod <-
                                                      linf=sprintf('%s.linf', species.name),
                                                      k=sprintf('%s.k', species.name),
                                                      recl=sprintf('%s.recl', species.name)),
-                                 stddev = c(init.sigma$ms, 
-                                            rep(init.sigma$ms[nrow(init.sigma)],
-                                                (.[[1]]$maxage-.[[1]]$minage)-(nrow(init.sigma)-1))),
+                                 stddev = c(init.sigma$ms[3:12], init.sigma$ms[12]),
                                  alpha = weight.alpha,
                                  beta = weight.beta)) %>%
     gadget_update('refweight',

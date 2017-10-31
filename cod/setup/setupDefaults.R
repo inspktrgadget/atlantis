@@ -1,11 +1,5 @@
 # defaults for time, species, area
 
-gd <- gadget_directory('cod/codModel')
-species.name <- 'cod'
-stock0 <- "cod0"
-stock <- "cod"
-stocknames <- c(stock0, stock)
-
 areas <- read.csv('atlantisInfo/boxInfo.csv', header=T)
 #boxes <- filter(areas, boundary == 0)$box_id
 boxes <- sprintf("Box%s", filter(areas, boundary == 0)$box_id)

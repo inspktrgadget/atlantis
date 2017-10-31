@@ -1,4 +1,4 @@
-minage <- cod[[1]]$minage
+minage <- cod0[[1]]$minage
 maxage <- cod[[1]]$maxage
 minlength <- cod[[1]]$minlength
 maxlength <- cod[[1]]$maxlength

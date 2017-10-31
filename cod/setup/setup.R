@@ -7,7 +7,14 @@ library(Rgadget)
 
 setwd('/home/pfrater/gadget/models/atlantis')
 source('../functions/gadgetUtils.R')
+
+# some basic name and directory structure defaults
 setup.d <- 'cod/setup'
+gd <- gadget_directory('cod/codModel')
+species.name <- 'cod'
+stock0 <- "cod0"
+stock <- "cod"
+stocknames <- c(stock0, stock)
 
 # connect to mfdb database
 mdb <- mfdb('atlantis_logisticsurvey')
