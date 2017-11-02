@@ -180,13 +180,13 @@ selection.plot <-
 
 
 # plot growth curve from model
-gr.plot <-
-    ggplot(fit$stock.growth,
-           aes(age,length)) + 
+selection.plot <-
+    ggplot(filter(fit$suitability, suit > 0),
+           aes(length,suit,lty=fleet, color = stock)) +
     geom_line() +
-    theme_bw() + ylab('Length') + xlab('Age') +
-    theme(legend.position = c(0.9,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm'))
+    theme_bw() + ylab('Suitability') + xlab('Length') +
+    theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
+          plot.margin = unit(c(0,0,0,0),'cm')) 
 
 
 # plot recruitment of stock by year
@@ -240,6 +240,17 @@ f.plot <-
     ylab("F") + xlab("Year") +  theme_bw() +
     theme(legend.position=c(0.2, 0.8), legend.title = element_blank(),
           plot.margin = unit(c(0,0,0,0),'cm'))
+
+f.by.age <- 
+    fit$stock.prey %>%
+    filter(stock == "cod") %>%
+    group_by(stock, year, age) %>%
+    summarize(f = mean(mortality))
+
+f.by.age.plot <- 
+    ggplot(f.by.age, aes(x=year, y=f)) + 
+    geom_line() + facet_wrap(~age) +
+    xlab("Year") + ylab("F") + theme_bw()
 
 ## basic plots to check parameters, initial values, and
 ## natural mortality (if estimated)
@@ -357,6 +368,66 @@ bm.scale.diff.plot <-
     theme(axis.text = element_text(size = 15),
           axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
+
+
+#########################
+# SSB
+#########################
+atl.ssb <- 
+    is_fg_count %>%
+    filter(count >= 1, age >= 4, month == 3) %>%
+    group_by(year, age) %>%
+    summarize(atl.ssb = sum((weight / 1e3) * count))
+
+gad.ssb <- 
+    fit$stock.std %>%
+    filter(age >= 4, step == 1) %>%
+    mutate(age = age - (age %% 2)) %>%
+    group_by(year, age) %>%
+    summarize(gad.ssb = sum(number * mean.weight))
+
+atl.gad.ssb <- 
+    left_join(gad.ssb, atl.ssb)
+
+# total ssb
+ssb <- 
+    atl.gad.ssb %>%
+    group_by(year) %>%
+    summarize(gad.ssb = sum(gad.ssb),
+              atl.ssb = sum(atl.ssb))
+
+ssb.plot <- 
+    ggplot(data=ssb, aes(x=year)) + 
+    geom_line(aes(y=gad.ssb/1e6, color = "gadget")) + 
+    geom_line(aes(y=atl.ssb/1e6, color = "atlantis")) +
+    xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() +
+    scale_color_manual("",
+                       breaks = c("gadget", "atlantis"),
+                       values = c("gadget" = "black",
+                                  "atlantis" = "red"),
+                       labels = c("gadget" = "Gadget",
+                                  "atlantis" = "Atlantis")) + 
+    theme(axis.text = element_text(size = 15),
+          axis.title = element_text(size = 17),
+          legend.text = element_text(size = 15))
+
+
+# ssb by age
+ssb.age.plot <- 
+    ggplot(data=atl.gad.ssb, aes(x=year)) + 
+    geom_line(aes(y=gad.ssb / 1e6, color = "gadget")) + 
+    geom_line(aes(y=atl.ssb / 1e6, color = "atlantis")) + facet_wrap(~age, scales = "free_y") +
+    xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() + 
+    scale_color_manual("",
+                       breaks = c("gadget", "atlantis"),
+                       values = c("gadget" = "black",
+                                  "atlantis" = "red"),
+                       labels = c("gadget" = "Gadget",
+                                  "atlantis" = "Atlantis")) + 
+    theme(axis.text = element_text(size = 15),
+          axis.title = element_text(size = 17),
+          legend.text = element_text(size = 15))
+
 
 #######################################
 ## to check numbers instead of biomass
@@ -573,10 +644,106 @@ gad.atl.init.plot <-
 
 <!-- Add specific results/figures you want presented here-->
 
+
+# Gadget Diagnostics
+**----------------------------------------------------------------------------------**
+
+<!-- Add specific results/figures you want presented here-->
+
+## Survey Indices
+
+### Spring
+``` {r}
+si.spr
+```
+
+### Autumn
+``` {r}
+si.aut
+```
+
+## Ages and Lengths
+
+``` {r}
+ldist.spr
+```
+
+``` {r}
+ldist.aut
+```
+
+``` {r}
+ldist.catch
+```
+
+``` {r}
+aldist.spr
+```
+
+``` {r}
+aldist.aut
+```
+
+``` {r}
+aldist.catch
+```
+
+### Selection
+``` {r}
+selection.plot
+```
+
+
+### F
+``` {r}
+f.plot
+```
+
+### F by age plot
+``` {r}
+f.by.age.plot
+```
+
+### Selection
+``` {r}
+selection.plot
+```
+
+# Gadget-Atlantis Comparisons
+
+### Total Biomass
+``` {r}
+biomass.comp.plot
+```
+
+### Total Biomass by age
+``` {r}
+age.biomass.comp.plot
+```
+
+
+### SSB (age 4+)
+``` {r}
+ssb.plot
+```
+
+### SSB by age
+``` {r}
+ssb.age.plot
+```
+
+### Numbers
 ``` {r}
 numbers.comp.plot
 ```
 
+### Numbers by age
+``` {r}
+age.numbers.plot
+```
+
+
+### Growth
 ``` {r}
 gr.check
 ```

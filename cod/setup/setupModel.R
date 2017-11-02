@@ -1,7 +1,7 @@
 # find some decent starting values for recl and stddev
 
 mla <- mfdb_sample_meanlength_stddev(mdb, c('age'),
-                                     c(list(sampling_type=c("SprSurvey","AutSurvey"),
+                                     c(list(sampling_type=c("SprSurveyTotals","AutSurveyTotals"),
                                             age=0:19),
                                        data.defaults))
 init.sigma <- 
@@ -63,7 +63,7 @@ cod0 <-
                                      beta=weight.beta),
                   beta=sprintf('(* 10 #%s.bbin)', species.name)) %>%
     gadget_update("naturalmortality", # fixed m
-                   c(0.3, 0.25)) %>%
+                   c(0.4, 0.3)) %>%
     # gadget_update('naturalmortality', # m for each age
     #               sprintf('#%1$s.age%2$s.m', 
     #                       species.name, 
@@ -144,7 +144,7 @@ cod <-
                                      beta=weight.beta),
                   beta=sprintf('(* 10 #%s.bbin)', .[[1]]$stockname)) %>%
     gadget_update("naturalmortality", 
-                  rep(0.2, ((.[[1]]$maxage - .[[1]]$minage) + 1)))
+                  rep(0.2, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
     # gadget_update('naturalmortality', # m for each age
     #               sprintf('#%1$s.age%2$s.m', 
     #                       .[[1]]$stockname, 

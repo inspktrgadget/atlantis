@@ -1,6 +1,6 @@
 minage <- cod0[[1]]$minage
 maxage <- cod[[1]]$maxage
-minlength <- cod[[1]]$minlength
+minlength <- cod0[[1]]$minlength
 maxlength <- cod[[1]]$maxlength
 dl <- cod[[1]]$dl
 

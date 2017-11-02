@@ -46,4 +46,5 @@ gadgetTest/results/*.html
 varTest/bootstrapRun
 varTest/errBootRuns
 varTest/varModels
-
+cod/test
+cod/test2
