@@ -34,14 +34,14 @@ n.by.age <- aldist %>% group_by(age) %>% summarize(total = sum(total))
 lengths.at.age <- data.frame(age=rep(n.by.age$age, n.by.age$total),
                   length=rep(aldist$length, aldist$total))
 # use the following if using 2 year age classes
-# age.groups <- data.frame(age = 0:19,
-#                           age.group = sort(rep(seq(0,18, by=2), 2)))
-# lengths.at.age <- mutate(lengths.at.age, 
-#                           age.group = ifelse(age %% 2 == 0, age, age-1))
+age.groups <- data.frame(age = 0:19,
+                          age.group = sort(rep(seq(0,18, by=2), 2)))
+lengths.at.age <- mutate(lengths.at.age,
+                          age.group = ifelse(age %% 2 == 0, age, age-1))
 
 cod.length.mn.sd <- 
     lengths.at.age %>%
-    group_by(age) %>%
+    group_by(age.group) %>%
     summarize(length.mean = mean(length), length.sd = sd(length)) %>% 
     na.omit()
 

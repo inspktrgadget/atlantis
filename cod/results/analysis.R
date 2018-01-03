@@ -10,7 +10,7 @@ library(plyr)
 library(tidyverse)
 library(grid)
 library(Rgadget)
-setwd('~/gadget/models/atlantis/cod/codVersions/codMod74')
+setwd('~/gadget/models/atlantis/cod/codVersions/codMod83')
 fit <- gadget.fit(wgts="WGTS", main.file='WGTS/main.final',
                   fleet.predict = data.frame(fleet = 'comm', ratio=1),
                   mat.par=c(-6.510198, 1.108594),
@@ -179,11 +179,11 @@ aldist.catch <-
 # plot suitability against length for both survey and commercial fleets
 selection.plot <-
     ggplot(filter(fit$suitability, suit > 0),
-           aes(length,suit,lty=fleet, color = stock)) +
+           aes(length,suit,lty=fleet)) +
     geom_line() +
     theme_bw() + ylab('Suitability') + xlab('Length') +
     theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) 
+          plot.margin = unit(c(0,0,0,0),'cm'))
 
 
 # plot growth curve from model

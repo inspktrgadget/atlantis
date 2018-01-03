@@ -28,7 +28,7 @@ ci_upper <- function(x) {
 lapply(models, function(x) {
     model_dir <- switch(
         x,
-        varMod = "varModels",
+        varMod = "varModels/varModels",
         bootMod = "bootstrapRun/BS.WGTS",
         halfBoot = "errBootRuns/bootrun_var0.147/BS.WGTS",
         fullBoot = "errBootRuns/bootrun_var0.3/BS.WGTS"

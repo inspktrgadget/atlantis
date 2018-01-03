@@ -3,7 +3,7 @@ comm.landings <- mfdb_sample_totalweight(mdb, NULL,
                               c(list(
                                   gear = "BMT",
                                   sampling_type="Cat",
-                                  species=data.defaults$species), data.defaults))
+                                  species=model.defaults$species), model.defaults))
 
 ## setup discards for long line fishery
 # discards <- mfdb_sample_totalweight(mdb, NULL,
@@ -23,14 +23,14 @@ gadgetfleet("Modelfiles/fleet", gd$dir, missingOkay=T) %>%
     gadget_update("totalfleet",
                   name = "spr",
                   suitability = fleet_suit(fleet = "spr", 
-                                           stock = stocknames, 
+                                           stock = stock, 
                                            fun = "exponentiall50",
                                            params = list("alpha", "l50")),
                   data=igfs.landings) %>%
     gadget_update("totalfleet",
                   name = "aut",
                   suitability = fleet_suit(fleet = "aut", 
-                                           stock = stocknames, 
+                                           stock = stock, 
                                            fun = "exponentiall50",
                                            params = list("alpha", "l50")),
                   data = aut.landings) %>%

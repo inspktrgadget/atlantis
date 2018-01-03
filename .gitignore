@@ -11,11 +11,12 @@ sppTemplate/*
 cod/modelCheck/*
 cod/setup/copyModel.sh
 cod/setup/itterfitter.sh
-cod/age0.1model/
+cod/age0.1model/*
 haddock/age0.1model/
 cod/age5yrModel/
 haddock/age5yrModel/
 cod/noAgeModel/
+cod/age0.1Model
 haddock/noAgeModel/
 haddock/hadModel/
 haddock/hadVersions/
@@ -46,5 +47,7 @@ gadgetTest/results/*.html
 varTest/bootstrapRun
 varTest/errBootRuns
 varTest/varModels
+varTest/varTestVersions
+varTest/results/varMod/varMod.RData
 cod/test
 cod/test2

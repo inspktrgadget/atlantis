@@ -56,29 +56,6 @@ fg_group <- is_functional_groups[c(is_functional_groups$Name == fgName),]
 is_fg_count <- atlantis_fg_tracer(is_dir, is_area_data, fg_group)
 
 
-# distribute 2 year atlantis age groups to single year classes
-source('functions/calcGrowth.R')
-#source('functions/calcWtGrowth.R')
-source('functions/parseAges.R')
-#source('functions/calcCodMort.R')
-source('cod/modelCheck/getAtlantisMort3.R')
-# add mortality and parse ages based on m
-age.count <- 
-    left_join(is_fg_count, m.func.vals) %>%
-    parseAges(.) %>%
-    arrange(year, month, day, area, depth, age)
-
-# redistribute lengths based on growth params
-smooth.len <- 
-    age.count %>% 
-    filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0-0.20), age),
-                           vb(linf, k, t0, age))) %>%
-    select(depth, area, year, month, day, group, cohort, weight, length, 
-           maturity_stage, age, count)
-
-
 # set up length groups and survey parameters
 length_group <-  seq(0.5, 200.5, by=1)
 #length_group <-  seq(0,max(is_fg_count$length, na.rm=T),by=10)
@@ -90,21 +67,21 @@ survey_suitability <- 1.5e-04 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
 survey_sigma <- 0 # 8.37e-06
 
 # Import entire Cod/Haddock content for one sample point so we can use this as a tracer value
-is_fg_tracer <- smooth.len[
-    #is_fg_count$year == attr(is_dir, 'start_year') &
-    smooth.len$month %in% c(1),]
-is_fg_tracer$species <- fg_group$MfdbCode
-is_fg_tracer$areacell <- is_fg_tracer$area
-is_fg_tracer$sampling_type <- 'Bio'
-mfdb_import_survey(mdb, is_fg_tracer, data_source = paste0('atlantis_tracer_', fg_group$Name))
-print('Tracer data imported')
-
+#is_fg_tracer <- is_fg_count[
+#    #is_fg_count$year == attr(is_dir, 'start_year') &
+#    is_fg_count$month %in% c(1),]
+#is_fg_tracer$species <- fg_group$MfdbCode
+#is_fg_tracer$areacell <- is_fg_tracer$area
+#is_fg_tracer$sampling_type <- 'Bio'
+#mfdb_import_survey(mdb, is_fg_tracer, data_source = paste0('atlantis_tracer_', fg_group$Name))
+#print('Tracer data imported')
+#
 # create survey from tracer values
 # keep spr survey as 4 because of gadget order of operations
 # keep aut survey as 9 because of recruitment jumps in atlantis
-is_fg_survey <- smooth.len[
-    smooth.len$area %in% paste('Box', 0:52, sep='') &
-        smooth.len$month %in% c(4,9),] %>%
+is_fg_survey <- is_fg_count[
+    is_fg_count$area %in% paste('Box', 0:52, sep='') &
+        is_fg_count$month %in% c(4,9),] %>%
 		mutate(sampling_type = ifelse(month == 4,
                                   "SprSurveyTotals",
                                   "AutSurveyTotals")) %>%
@@ -122,7 +99,7 @@ print('Survey index data imported')
 
 # strip ages and lengths from survey to mimic real world data
 # see '~gadget/gadget-models/atlantis/cod/initdb/codSampleNumbers.R
-al.survey <- stripAgeLength(survey, 0.7072256, 0.07072157)
+al.survey <- stripAgeLength(survey, 0.7, 0.1)
 al.survey$length <- round(al.survey$length)
 al.survey$weight <- round(al.survey$weight)
 
@@ -195,21 +172,6 @@ wl <- getStructN(is_dir, is_area_data, fg_group)
 
 age.catch.wl <- left_join(age.catch, wl)
 
-# parse the catch age-length data to single year classes
-age.catch.wl <- left_join(age.catch.wl, m.func.vals)
-parsed.age.catch.wl <- 
-    parseCatchAges(age.catch.wl) %>% 
-    arrange(year, area, month, age)
-
-smooth.len.catch <- 
-    parsed.age.catch.wl %>%
-    filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0-0.20), age),
-                           vb(linf, k, t0, age))) %>%
-    select(area, year, month, fishery, group, cohort, weight, length, 
-           age, count)
-
 
 # see codSampleNumber.R - line 61 to EOF
 fleet.suitability <- rep(0.01, length(length_group))
@@ -218,7 +180,7 @@ fleet.sigma <- 5.7e-07
 # trying to avoid adding error in lengths here as well
 
 comm.catch.samples <- 
-    smooth.len.catch %>%
+    age.catch.wl %>%
     filter(month %in% c(1:10)) %>%
     atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
     atlantis_tracer_survey_select(length_group, fleet.suitability, 0) %>%

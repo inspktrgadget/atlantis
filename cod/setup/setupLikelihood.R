@@ -11,74 +11,30 @@ gadgetlikelihood('likelihood', gd$dir, missingOkay=T) %>%
     gadget_update('understocking',
                   name = 'understocking',
                   weight = '100') %>%
-    # gadget_update('surveydistribution',
-    #               name = 'ldist.spr',
-    #               weight = 1,
-    #               data = ldist.igfs[[1]],
-    #               parameters = c(0.001, 0),
-    #               # parameters = quote(exp(spr.si.beta) * 0.7072256) %>%
-    #               #              to.gadget.formulae(),
-    #               suitability = surveydist_suit(stock = stocknames,
-    #                                           fun = 'constant',
-    #                                           params = 1),
-    #               stocknames = stocknames) %>%
-# gadget_update('surveydistribution',
-#               name = 'aldist.spr',
-#               weight = 1,
-#               data = aldist.igfs[[1]],
-#               parameters = c(0.001, 0),
-#               # parameters = quote(exp(spr.si.beta) * 0.0707215) %>%
-#               #              to.gadget.formulae(),
-#               suitability = surveydist_suit(stock = stocknames,
-#                                           fun = 'constant',
-#                                           params = 1),
-#               stocknames = stocknames) %>%
-# gadget_update('surveydistribution',
-#               name = 'ldist.aut',
-#               weight = 1,
-#               data = ldist.aut[[1]],
-#               parameters = c(0.001, 0),
-#               # parameters = quote(exp(aut.si.beta) * 0.7072256) %>%
-#               #              to.gadget.formulae(),
-#               suitability = surveydist_suit(stock = stocknames,
-#                                           fun = 'constant',
-#                                           params = 1),
-#               stocknames = stocknames) %>%
-# gadget_update('surveydistribution',
-#               name = 'aldist.aut',
-#               weight = 1,
-#               data = aldist.aut[[1]],
-#               parameters = c(0.001, 0),
-#               # parameters = quote(exp(aut.si.beta) * 0.0707215) %>%
-#               #              to.gadget.formulae(),
-#               suitability = surveydist_suit(stock = stocknames,
-#                                           fun = 'constant',
-#                                           params = 1),
-#               stocknames = stocknames) %>%
-gadget_update('catchdistribution',
-              name = 'ldist.spr',
-              weight = 1,
-              data = ldist.igfs[[1]],
-              fleetnames = c('spr'),
-              stocknames = stocknames) %>%
+    gadget_update('catchdistribution',
+                  name = 'ldist.spr',
+                  weight = 1,
+                  data = ldist.igfs[[1]],
+                  fleetnames = c('spr'),
+                  stocknames = stock) %>%
     gadget_update('catchdistribution',
                   name = 'aldist.spr',
                   weight = 1,
                   data = aldist.igfs[[1]],
                   fleetnames = c('spr'),
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('catchdistribution',
                   name = 'ldist.aut',
                   weight = 1,
                   data = ldist.aut[[1]],
                   fleetnames = c('aut'),
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('catchdistribution',
                   name = 'aldist.aut',
                   weight = 1,
                   data = aldist.aut[[1]],
                   fleetnames = c('aut'),
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('catchdistribution',
                   name = 'ldist.comm',
                   weight = 1,
@@ -102,35 +58,35 @@ gadget_update('catchdistribution',
     #               weight = 1,
     #               data = aldist.discards[[1]],
     #               fleetnames = c('discards'),
-#               stocknames = stocknames) %>%
-gadget_update('surveyindices',
-              name = 'spr.si.0.20',
-              weight = 1,
-              data = spr.si.0.20[[1]],
-              fittype = 'fixedslopeloglinearfit',
-              slope = 1,
-              stocknames = stocknames) %>%
+    #               stocknames = stocknames) %>%
+    gadget_update('surveyindices',
+                  name = 'spr.si.0.20',
+                  weight = 1,
+                  data = spr.si.0.20[[1]],
+                  fittype = 'fixedslopeloglinearfit',
+                  slope = 1,
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'spr.si.20.35',
                   weight = 1,
                   data = spr.si.20.35[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'spr.si.35.45',
                   weight = 1,
                   data = spr.si.35.45[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'spr.si.45.60',
                   weight = 1,
                   data = spr.si.45.60[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'spr.si.60.80',
                   weight = 1,
@@ -151,28 +107,28 @@ gadget_update('surveyindices',
                   data = aut.si.0.20[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'aut.si.20.35',
                   weight = 1,
                   data = aut.si.20.35[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'aut.si.35.45',
                   weight = 1,
                   data = aut.si.35.45[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'aut.si.45.60',
                   weight = 1,
                   data = aut.si.45.60[[1]],
                   fittype = 'fixedslopeloglinearfit',
                   slope = 1,
-                  stocknames = stocknames) %>%
+                  stocknames = stock) %>%
     gadget_update('surveyindices',
                   name = 'aut.si.60.80',
                   weight = 1,
