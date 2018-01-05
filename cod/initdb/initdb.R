@@ -20,6 +20,7 @@ source('functions/stripFleetAges.R')
 source('cod/initdb/getCodLengthVar.R') # source cod length sd at age group
 
 # mfdb('atlantis_constSurvey_0.001', destroy_schema=T)
+mfdb("atlantis_logisticsurvey", destroy_schema=TRUE)
 mdb <- mfdb('atlantis_logisticsurvey')
 
 # read in dir and options
@@ -174,7 +175,7 @@ age.catch.wl <- left_join(age.catch, wl)
 
 
 # see codSampleNumber.R - line 61 to EOF
-fleet.suitability <- rep(0.01, length(length_group))
+fleet.suitability <- rep(0.02, length(length_group))
 fleet.sigma <- 5.7e-07
 
 # trying to avoid adding error in lengths here as well

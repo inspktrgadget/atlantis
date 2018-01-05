@@ -27,5 +27,5 @@ commCatchAges <- function (adir, area_data, fg_group, fishery)
     age_class_size <- as.numeric(as.character(fg_group$NumAgeClassSize))
     df_out$cohort <- sort(rep(1:cohorts, nrow(df_base)))
     df_out$age <- (df_out$cohort * age_class_size) - (age_class_size%/%2 + 1)
-    return(df_out)
+    return(mfdbatlantis:::atlantis_filter_month_13(df_out))
 }
