@@ -8,7 +8,6 @@ modelRunProtocol.txt
 /template/
 codeFromErla/*
 sppTemplate/*
-cod/modelCheck/*
 cod/setup/copyModel.sh
 cod/setup/itterfitter.sh
 cod/age0.1model/*
