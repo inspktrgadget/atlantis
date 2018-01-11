@@ -2,9 +2,9 @@ Sys.setenv(GADGET_WORKING_DIR = normalizePath(gd$dir))
 callGadget(s=1)
 
 read.gadget.parameters(sprintf('%s/params.out', gd$dir)) %>%
-    init.params('linf', 127.903808, 120, 135, 1) %>%
-    init.params('k', 0.140532, 0.11, 0.196, 1) %>%
-    init.params('recl', 30.751188, 15, 35, 1) %>%
+    init.params('linf', 128.3374362, 120, 135, 1) %>%
+    init.params('k', 0.1390399, 0.11, 0.196, 1) %>%
+    init.params('recl', 23.5805761, 15, 35, 1) %>%
     init.params('bbin', 100, 1, 1e4, 1) %>%
     # init.params('age[0-9]', 0.2, 0.001, 1, 1) %>%
     init.params('m.decay', 0.2, 0.0001, 5, 1) %>%
