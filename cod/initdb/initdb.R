@@ -182,7 +182,7 @@ fleet.sigma <- 5.7e-07
 
 comm.catch.samples <- 
     age.catch.wl %>%
-    filter(month %in% c(1:10)) %>%
+    filter(month %in% c(2,5,8,10)) %>%
     atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
     atlantis_tracer_survey_select(length_group, fleet.suitability, 0) %>%
     filter(count >= 1)
