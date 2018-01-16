@@ -1,11 +1,14 @@
 library(Rgadget)
-setwd('~/gadget/atlantis/cod/codModel')
+setwd('~/gadget/atlantis/cod/codSpawn')
 gt <- system.time(
     tmp <- gadget.iterative(rew.sI=TRUE,
                             main='main',
-                            grouping=list(short=c('spr.si.short', 'aut.si.short'),
-                                          mid=c('spr.si.mid', 'aut.si.mid'),
-                                          long=c('spr.si.long', 'aut.si.long')),
+                            grouping=list(short=c('spr.si.0.20', 'aut.si.0.20',
+                                                  'spr.si.20.35', 'aut.si.20.35'),
+                                          mid=c('spr.si.35.45', 'aut.si.35.45',
+                                                'spr.si.45.60', 'aut.si.45.60'),
+                                          long=c('spr.si.60.80', 'aut.si.60.80',
+                                                 'spr.si.80.pl', 'aut.si.80.pl')),
                             wgts='WGTS')
 )[3]
 

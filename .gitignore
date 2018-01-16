@@ -1,4 +1,6 @@
-.Rhistory
+*.Rhistory
+*.RData
+*.Rdata
 cod/codVersions/*
 cod/codModel/*
 atlantisInfo/*
@@ -33,4 +35,4 @@ cod/rmFiles.sh
 varTest/bootstrapRun
 varTest/errBootRuns
 varTest/varModels
-
+varTest/varTestVersions

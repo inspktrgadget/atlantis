@@ -10,7 +10,7 @@ library(plyr)
 library(tidyverse)
 library(grid)
 library(Rgadget)
-setwd('~/gadget/models/atlantis/cod/codVersions/codSpawn6')
+setwd('~/gadget/models/atlantis/cod/codSpawn/codSpawnModel')
 fit <- gadget.fit(wgts="WGTS", main.file='WGTS/main.final',
                   fleet.predict = data.frame(fleet = 'comm', ratio=1),
                   mat.par=c(-6.510198, 1.108594),
@@ -207,7 +207,8 @@ spawn.plot <-
     ggplot(data=fit$res.by.year, aes(x=ssb)) + 
     stat_function(fun = bevHolt, args = list(mu = mu, lambda = lam)) + 
     stat_function(fun = bevHoltAtl, 
-                  args = list(mu = 4e8, lambda = 2.5e11), color = "red") +
+                  args = list(mu = 4e8, lambda = 2.5e11), 
+                  color = "red", linetype = "dashed") +
     theme_bw() + xlab("SSB") + ylab("Recruitment")
 
 # plotting the catch by year
@@ -263,7 +264,7 @@ init.vals <-
     xlab('Age') + ylab('Numbers (millions)') + theme_bw()
 
 params.plot <- 
-    ggplot(data=fit$params,
+    ggplot(data=filter(fit$params, optimise == 1),
            aes(x=switch, y=value)) + geom_point() +
     geom_errorbar(aes(ymin=lower, ymax=upper), width = 0.1) + 
     facet_wrap(~switch, scales='free') + theme_bw() +
