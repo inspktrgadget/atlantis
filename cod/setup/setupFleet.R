@@ -24,14 +24,14 @@ gadgetfleet("Modelfiles/fleet", gd$dir, missingOkay=T) %>%
                   name = "spr",
                   suitability = fleet_suit(fleet = "spr", 
                                            stock = stock, 
-                                           fun = "exponentiall50",
+                                           fun = "newexponentiall50",
                                            params = list("alpha", "l50")),
                   data=igfs.landings) %>%
     gadget_update("totalfleet",
                   name = "aut",
                   suitability = fleet_suit(fleet = "aut", 
                                            stock = stock, 
-                                           fun = "exponentiall50",
+                                           fun = "newexponentiall50",
                                            params = list("alpha", "l50")),
                   data = aut.landings) %>%
     gadget_update("totalfleet",

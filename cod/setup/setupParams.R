@@ -7,9 +7,9 @@ read.gadget.parameters(sprintf('%s/params.out', gd$dir)) %>%
     init.params('recl', 23.5805761, 15, 35, 1) %>%
     init.params('bbin', 100, 1, 1e4, 1) %>%
     # init.params('age[0-9]', 0.2, 0.001, 1, 1) %>%
-    init.params('m.decay', 0.2, 0.0001, 5, 1) %>%
-    init.params('max.m', 0.4, 0.2, 1.2, 1) %>%
-    init.params('min.m', 0.25, 0, 0.35, 1) %>%
+    init.params('m.decay', 0, 0.0001, 5, 1) %>%
+    init.params('max.m', 0.35, 0.2, 1.2, 1) %>%
+    init.params('min.m', 0.35, 0, 0.35, 1) %>%
     init.params('mult', 1, 1e-05, 2, 1) %>%
     init.params('init.abund', 5, 1e-05, 5, 1) %>%
     # init.params('init[0-9]', 100, 1e-05, 1000, 1) %>%

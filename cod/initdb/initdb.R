@@ -211,7 +211,7 @@ wl <- getStructN(is_dir, is_area_data, fg_group)
 age_catch_wl <- left_join(age_catch, wl)
 
 # parse the catch age-length data to single year classes
-age_catch_wl <- left_join(age_catch_wl, m.func.vals)
+age_catch_wl <- left_join(age_catch_wl, m_vals)
 parsed_age_catch_wl <- 
     parseCatchAges(age_catch_wl) %>% 
     arrange(year, area, month, age)
