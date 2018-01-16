@@ -38,7 +38,7 @@ fg_group <- is_functional_groups[c(is_functional_groups$Name == fgName),]
 is_fg_count <- atlantis_fg_tracer(is_dir, is_area_data, fg_group) %>% filter(count > 0)
 
 # make a cohort table
-cohort.tbl <- 
+cohort_tbl <- 
     is_fg_count %>%
     filter(month == 6, count >= 1) %>%
     select(year, age, count) %>%
@@ -47,41 +47,41 @@ cohort.tbl <-
     spread(age, count)
 
 # parse out even and odd years
-even.yrs <- 
-    cohort.tbl %>%
+even_yrs <- 
+    cohort_tbl %>%
     filter(year %% 2 == 0)
 
-odd.yrs <- 
-    cohort.tbl %>%
+odd_yrs <- 
+    cohort_tbl %>%
     filter(year %% 2 == 1)
 
 # calculate z for even and odd years
 # this needs to be divided by 2 since they age classes are 2 years,
 # which I do below
-z.vec <- NULL
-even.z.data <- data.frame(age=NULL, z = NULL)
+z_vec <- NULL
+even_z_data <- data.frame(age=NULL, z = NULL)
 for (i in 2:10) {
-    z.yng <- log(even.yrs[-nrow(even.yrs),i]);
-    z.old <- log(even.yrs[-1,i+1]);
-    z.vec <- sapply(z.yng - z.old, as.vector);
-    tmp <- data.frame(age = as.numeric(colnames(even.yrs)[i]),
-                      z = as.vector(z.vec));
-    even.z.data <- rbind(even.z.data, tmp);
+    z_yng <- log(even_yrs[-nrow(even_yrs),i]);
+    z_old <- log(even_yrs[-1,i+1]);
+    z_vec <- sapply(z_yng - z_old, as.vector);
+    tmp <- data.frame(age = as.numeric(colnames(even_yrs)[i]),
+                      z = as.vector(z_vec));
+    even_z_data <- rbind(even_z_data, tmp);
 }
 
-z.vec <- NULL
-odd.z.data <- data.frame(age=NULL, z = NULL)
+z_vec <- NULL
+odd_z_data <- data.frame(age=NULL, z = NULL)
 for (i in 2:10) {
-    z.yng <- log(odd.yrs[-nrow(odd.yrs),i]);
-    z.old <- log(odd.yrs[-1,i+1]);
-    z.vec <- sapply(z.yng - z.old, as.vector);
-    tmp <- data.frame(age = as.numeric(colnames(odd.yrs)[i]),
-                      z = as.vector(z.vec));
-    odd.z.data <- rbind(odd.z.data, tmp);
+    z_yng <- log(odd_yrs[-nrow(odd_yrs),i]);
+    z_old <- log(odd_yrs[-1,i+1]);
+    z_vec <- sapply(z_yng - z_old, as.vector);
+    tmp <- data.frame(age = as.numeric(colnames(odd_yrs)[i]),
+                      z = as.vector(z_vec));
+    odd_z_data <- rbind(odd_z_data, tmp);
 }
 
-z.data <- 
-    rbind(even.z.data, odd.z.data) %>%
+z_data <- 
+    rbind(even_z_data, odd_z_data) %>%
     arrange(age)
 
 ## now get f in a similar manner
@@ -91,48 +91,48 @@ fisheryCode <- 'bottrawl'
 fishery <- is_fisheries[is_fisheries$Code == fisheryCode,]
 
 # to set up as age structured data
-catch.cohort.tbl <- 
+catch_cohort_tbl <- 
     commCatchAges(is_dir, is_area_data, fg_group, fishery) %>%
     filter(count >= 1) %>%
-    rename(num.caught = count) %>%
-    select(area, year, month, num.caught, age) %>%
+    rename(num_caught = count) %>%
+    select(area, year, month, num_caught, age) %>%
     mutate(area = as.character(area)) %>%
     group_by(year, age) %>%
-    summarize(num.caught = sum(num.caught)) %>%
-    spread(age, num.caught)
+    summarize(num_caught = sum(num_caught)) %>%
+    spread(age, num_caught)
 
-cohort.mat <- 
-    cohort.tbl %>%
+cohort_mat <- 
+    cohort_tbl %>%
     ungroup() %>%
     select(-year) %>%
     as.matrix()
-catch.cohort.mat <- 
-    catch.cohort.tbl %>%
+catch_cohort_mat <- 
+    catch_cohort_tbl %>%
     ungroup() %>%
     select(-year) %>%
     as.matrix()
-f <- -log(cohort.mat / (catch.cohort.mat[2:66,] + cohort.mat))
+f <- -log(cohort_mat / (catch_cohort_mat[2:66,] + cohort_mat))
 
 # merging the data.frames for z and f - subtracting f from z to get m
 # this provides very different values than calculating by month
-f.vals <- 
+f_vals <- 
     gather(as.data.frame(f), key=age, value=value) %>%
     mutate(age = as.numeric(age)) %>%
     rename(f = value)
-mort.data <- 
-    left_join(z.data, f.vals) %>%
+mort_data <- 
+    left_join(z_data, f_vals) %>%
     mutate(m = (z/2) - f)
-mean.m <- 
-    mort.data %>% 
+m_vals <- 
+    mort_data %>% 
     group_by(age) %>%
-    summarize(mean.m = mean(m),
-              median.m = median(m))
+    summarize(mean_m = mean(m),
+              median_m = median(m))
 
 
 # you need to add in discards if those are included
-# age.discards <- 
+# age_discards <- 
 #     discardAges(is_dir, is_area_data, fg_group, fishery) %>%
 #     filter(count >= 1) %>%
-#     rename(num.discard = count) %>%
-#     select(area, year, month, num.discard, age) %>%
+#     rename(num_discard = count) %>%
+#     select(area, year, month, num_discard, age) %>%
 #     mutate(area = as.character(area))

@@ -1,6 +1,6 @@
 minage <- cod[[1]]$minage
-maxage <- cod[[1]]$maxage + 2
-minlength <- 20 #cod[[1]]$minlength
+maxage <- cod[[1]]$maxage
+minlength <- cod[[1]]$minlength
 maxlength <- 130 #cod[[1]]$maxlength
 dl <- cod[[1]]$dl
 
@@ -11,7 +11,7 @@ ldist.igfs <-
     mfdb_sample_count(mdb, c('age', 'length'), c(list(
         sampling_type = 'SprSurvey',
         species = data.defaults$species,
-        age = mfdb_group(all=seq(minage, maxage, by = 2)),
+        age = mfdb_group(all=seq(minage, maxage, by = 1)),
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
                                open_ended=c('upper', 'lower'))),
         data.defaults))
@@ -21,7 +21,7 @@ ldist.igfs <-
 aldist.igfs <-
     mfdb_sample_count(mdb, c('age', 'length'), c(list(
         sampling_type = 'SprSurvey',
-        age = mfdb_interval('age', seq(minage, maxage, by = 2),
+        age = mfdb_interval('age', seq(minage, maxage, by = 1),
                             open_ended=c('upper')),
         species=data.defaults$species,
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
@@ -44,7 +44,7 @@ ldist.aut <-
     mfdb_sample_count(mdb, c('age', 'length'), c(list(
         sampling_type = 'AutSurvey',
         species = data.defaults$species, 
-        age = mfdb_group(all=seq(minage, maxage, by = 2)), 
+        age = mfdb_group(all=seq(minage, maxage, by = 1)), 
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
                                open_ended=c('upper', 'lower'))),
         data.defaults))
@@ -53,7 +53,7 @@ ldist.aut <-
 aldist.aut <-
     mfdb_sample_count(mdb, c('age', 'length'), c(list(
         sampling_type = 'AutSurvey',
-        age = mfdb_interval('age', seq(minage, maxage, by = 2),
+        age = mfdb_interval('age', seq(minage, maxage, by = 1),
                             open_ended=c('upper')),
         species=data.defaults$species,
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
@@ -75,7 +75,7 @@ ldist.comm <-
     mfdb_sample_count(mdb, c('age', 'length'), c(list(
         sampling_type = 'CommSurvey',
         species = data.defaults$species,
-        age = mfdb_group(all=seq(minage, maxage, by = 2)), 
+        age = mfdb_group(all=seq(minage, maxage, by = 1)), 
         gear = c('BMT'),
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
                                open_ended=c('upper', 'lower'))),
@@ -87,7 +87,7 @@ aldist.comm <-
     mfdb_sample_count(mdb, c('age', 'length'), c(list(
         sampling_type = 'CommSurvey',
         gear = 'BMT',
-        age = mfdb_interval('age', seq(minage, maxage, by = 2),
+        age = mfdb_interval('age', seq(minage, maxage, by = 1),
                             open_ended = c('upper')),
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
                                open_ended=c('upper', 'lower'))),
