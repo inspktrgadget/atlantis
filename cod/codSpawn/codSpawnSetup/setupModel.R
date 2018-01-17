@@ -45,7 +45,7 @@ cod0 <-
     #                       species.name, 
     #                       .[[1]]$minage:.[[1]]$maxage)) %>%
     gadget_update('naturalmortality', # m as a function of age
-                  m.estimate.formula(age=.[[1]]$minage:.[[1]]$maxage,
+                  m_estimate_formula(age=.[[1]]$minage:.[[1]]$maxage,
                                      m=sprintf('%s.m.decay', species.name),
                                      max.m=sprintf('%s.max.m', species.name),
                                      min.m=sprintf('%s.min.m', species.name))) %>%
@@ -56,7 +56,7 @@ cod0 <-
                                  # age.factor = sprintf('(* 10 #%1$s.init%2$s)',
                                  #                      species.name,
                                  #                      age),
-                                 age.factor=init.age.factor(age=age,
+                                 age.factor=init_age_factor(age=age,
                                                             m=sprintf('%s.init.decay', 
                                                                       species.name),
                                                             age.scalar=sprintf('%s.init.scalar', 
@@ -109,7 +109,7 @@ cod <-
     #                       .[[1]]$stockname, 
     #                       .[[1]]$minage:.[[1]]$maxage)) %>%
     gadget_update('naturalmortality', # m as a function of age
-                  m.estimate.formula(age=.[[1]]$minage:.[[1]]$maxage,
+                  m_estimate_formula(age=.[[1]]$minage:.[[1]]$maxage,
                                      m=sprintf('%s.m.decay', .[[1]]$stockname),
                                      max.m=sprintf('%s.max.m', .[[1]]$stockname),
                                      min.m=sprintf('%s.min.m', .[[1]]$stockname))) %>%
@@ -120,7 +120,7 @@ cod <-
                                  # age.factor = sprintf('(* 10 #%1$s.init%2$s)',
                                  #                      .[[1]]$stockname,
                                  #                      age),
-                                 age.factor=init.age.factor(age=age,
+                                 age.factor=init_age_factor(age=age,
                                                             m=sprintf('%s.init.decay', 
                                                                       .[[1]]$stockname),
                                                             age.scalar=sprintf('%s.init.scalar', 
