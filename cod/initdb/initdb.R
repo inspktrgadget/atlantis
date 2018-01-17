@@ -211,16 +211,28 @@ wl <- getStructN(is_dir, is_area_data, fg_group)
 age_catch_wl <- left_join(age_catch, wl)
 
 # parse the catch age-length data to single year classes
-age_catch_wl <- left_join(age_catch_wl, m_vals)
+
+# for catches we need to also take selectivity into account when parsing
+# I painstakingly, by trial and error, found some parameters for parsing_selectivity()
+# that are "good enough", these are by no means optimized
+flt_lsm <- 3.25
+flt_b <- 1.45 # Controls the shape of the curve
+flt_int <- -0.2
+parsing_selectivity <- function(m, age) {
+    ((m - flt_int) / (1 + exp(-flt_b * (age - flt_lsm)))) + flt_int
+}
 parsed_age_catch_wl <- 
-    parseCatchAges(age_catch_wl) %>% 
+    age_catch_wl %>% 
+    left_join(m_vals) %>%
+    mutate(m = parsing_selectivity(0.35, age)) %>%
+    parseCatchAges() %>% 
     arrange(year, area, month, age)
 
 smooth_len_catch <- 
     parsed_age_catch_wl %>%
     filter(count >= 1) %>%
     left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
+    mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
                            vb(linf, k, t0, age))) %>%
     select(area, year, month, fishery, group, cohort, weight, length, 
            age, count)
@@ -233,7 +245,6 @@ fleet_sigma <- 5.7e-07
 
 comm_catch_samples <- 
     smooth_len_catch %>%
-    filter(month %in% c(2,5,8,10)) %>%
     atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
     atlantis_tracer_survey_select(length_group, fleet_suitability, 0) %>%
     filter(count >= 1)

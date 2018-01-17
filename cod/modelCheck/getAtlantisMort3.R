@@ -109,7 +109,7 @@ params <- nlm(m_decay_sse, c(0.25, 0, 0.3),
 # the age distributions after parsing ages in the atlantis data
 # the following parameters resulted in the smoothest age distributions
 # on accident I discovered that a constant m over 0.3ish results in a pretty smooth dist
-m_vals <- data.frame(age = 0:19, m = 0.35)
+m_vals <- data.frame(age = 0:19, m = 0.338)
 
 # m_vals <- 
 #     data.frame(age = 0:19,
