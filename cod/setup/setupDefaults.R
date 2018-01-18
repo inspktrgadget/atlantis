@@ -6,7 +6,7 @@ boxes <- sprintf("Box%s", filter(areas, boundary == 0)$box_id)
 
 st_year <- 1970
 end_year <- 2012
-data_st_year <- 1982
+data_st_year <- 1980
 year_range <- st_year:end_year
 # setup model defaults
 model_defaults <- list(   

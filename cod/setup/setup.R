@@ -12,7 +12,9 @@ source("../functions/gadgetUtils.R")
 setup_d <- "cod/setup"
 gd <- gadget_directory("cod/codModel")
 species_name <- "cod"
+stock0 <- "cod0"
 stock <- "cod"
+stocknames <- c(stock0, stock)
 
 # connect to mfdb database
 mdb <- mfdb("atlantis_logisticsurvey")

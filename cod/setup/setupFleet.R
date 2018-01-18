@@ -32,7 +32,8 @@ gadgetfleet("Modelfiles/fleet", gd$dir, missingOkay=T) %>%
                   suitability = fleet_suit(fleet = "aut", 
                                            stock = stock, 
                                            fun = "newexponentiall50",
-                                           params = list("alpha", "l50")),
+                                           params = c("alpha", "l50"), 
+                                           param_names = species_name),
                   data = aut_landings) %>%
     gadget_update("totalfleet",
                   name = "comm",
@@ -43,7 +44,7 @@ gadgetfleet("Modelfiles/fleet", gd$dir, missingOkay=T) %>%
                   data = comm_landings[[1]]) %>%
     # gadget_update("totalfleet",
     #               name = "discards",
-    #               suitability = fleet.suit("discards", stocknames, "exponentiall50"),
+    #               suitability = fleet_suit("discards", stocknames, "exponentiall50"),
     #               data = discards[[1]]) %>%
     write.gadget.file(gd$dir)
 

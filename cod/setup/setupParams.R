@@ -8,9 +8,9 @@ read.gadget.parameters(sprintf("%s/params.out", gd$dir)) %>%
     init_params("bbin.mult", 1e4, 1, 1e6, 1) %>%
     init_params("bbin", 1e4, 1, 1e6, 1) %>%
     # init_params("age[0-9]", 0.2, 0.001, 1, 1) %>%
-    init_params("max.m", 0.15, 0.2, 1.2, 1) %>%
-    init_params("min.m", 0.15, 0, 0.35, 1) %>%
-    init_params("m.decay", 0, 0.0001, 5, 1) %>%
+    init_params("max.m", 0.15, 0.2, 1.2, 0) %>%
+    init_params("min.m", 0.15, 0, 0.35, 0) %>%
+    init_params("m.decay", 0, 0.0001, 5, 0) %>%
     init_params("init.mult", 1, 1e-05, 10, 1) %>%
     init_params("init.abund", 5, 1e-05, 10, 1) %>%
     # init_params("init[0-9]", 100, 1e-05, 1000, 1) %>%
