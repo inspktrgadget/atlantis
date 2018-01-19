@@ -1,25 +1,24 @@
 # defaults for time, species, area
 
 gd <- gadget_directory('cod/codSpawn/codSpawnModel')
-species.name <- 'cod'
-stock0 <- "cod0"
+species_name <- "cod"
 stock <- "cod"
-stocknames <- c(stock0, stock)
+
 
 areas <- read.csv('atlantisInfo/boxInfo.csv', header=T)
 #boxes <- filter(areas, boundary == 0)$box_id
 boxes <- sprintf("Box%s", filter(areas, boundary == 0)$box_id)
 
-st.year <- 1960
-end.year <- 1998
-data.st.year <- 1968
-year.range <- st.year:end.year
+st_year <- 1960
+end_year <- 1998
+data_st_year <- 1968
+year_range <- st_year:end_year
 # setup model defaults
-model.defaults <- list(   
+model_defaults <- list(   
     areacell = mfdb_group("1" = boxes),
     timestep = mfdb_timestep_quarterly,
-    year = st.year:end.year,
+    year = st_year:end_year,
     species = 'COD')
 # this is different because of atlantis data being so long
-data.defaults <- within(model.defaults, 
-                        year <- data.st.year:end.year)
+data_defaults <- within(model_defaults, 
+                        year <- data_st_year:end_year)

@@ -1,72 +1,72 @@
-spr.si.0.20 <- mfdb_sample_count(mdb, c('length'), c(list(
+spr_si_0_20 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='SprSurveyTotals',
-    length = mfdb_interval('len', c(0,20))),
-    data.defaults))
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(0,20))),
+    data_defaults))
 
-spr.si.20.35 <- mfdb_sample_count(mdb, c('length'), c(list(
+spr_si_20_35 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='SprSurveyTotals',
-    length = mfdb_interval('len', c(20,35))),
-    data.defaults))
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(20,35))),
+    data_defaults))
 
-spr.si.35.45 <- mfdb_sample_count(mdb, c('length'), c(list(
+spr_si_35_45 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='SprSurveyTotals',
-    length = mfdb_interval('len', c(35,45))),    
-    data.defaults))
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(35,45))),    
+    data_defaults))
 
-spr.si.45.60 <- mfdb_sample_count(mdb, c('length'), c(list(
+spr_si_45_60 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='SprSurveyTotals',
-    length = mfdb_interval('len', c(45,60))),    
-    data.defaults))
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(45,60))),    
+    data_defaults))
 
-spr.si.60.80 <- mfdb_sample_count(mdb, c('length'), c(list(
+spr_si_60_80 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='SprSurveyTotals',
-    length = mfdb_interval('len', c(60,80))),    
-    data.defaults))
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(60,80))),    
+    data_defaults))
 
-spr.si.80.pl <- mfdb_sample_count(mdb, c('length'), c(list(
+spr_si_80_pl <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='SprSurveyTotals',
-    length = mfdb_interval('len', c(80, maxlength), open_ended='upper')),    
-    data.defaults))
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(80, maxlength), open_ended="upper")),    
+    data_defaults))
 
 # autumn survey indices
-aut.si.0.20 <- mfdb_sample_count(mdb, c('length'), c(list(
+aut_si_0_20 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='AutSurveyTotals',
-    length = mfdb_interval('len', c(0,20))),
-    data.defaults))
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(0,20))),
+    data_defaults))
 
-aut.si.20.35 <- mfdb_sample_count(mdb, c('length'), c(list(
+aut_si_20_35 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='AutSurveyTotals',
-    length = mfdb_interval('len', c(20,35))),
-    data.defaults))
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(20,35))),
+    data_defaults))
 
-aut.si.35.45 <- mfdb_sample_count(mdb, c('length'), c(list(
+aut_si_35_45 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='AutSurveyTotals',
-    length = mfdb_interval('len', c(35,45))),    
-    data.defaults))
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(35,45))),    
+    data_defaults))
 
-aut.si.45.60 <- mfdb_sample_count(mdb, c('length'), c(list(
+aut_si_45_60 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='AutSurveyTotals',
-    length = mfdb_interval('len', c(45,60))),    
-    data.defaults))
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(45,60))),    
+    data_defaults))
 
-aut.si.60.80 <- mfdb_sample_count(mdb, c('length'), c(list(
+aut_si_60_80 <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='AutSurveyTotals',
-    length = mfdb_interval('len', c(60,80))),    
-    data.defaults))
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(60,80))),    
+    data_defaults))
 
-aut.si.80.pl <- mfdb_sample_count(mdb, c('length'), c(list(
+aut_si_80_pl <- mfdb_sample_count(mdb, c("length"), c(list(
     data_source = "atlantis_survey_totals_Cod",
-    sampling_type ='AutSurveyTotals',
-    length = mfdb_interval('len', c(80, maxlength), open_ended='upper')),    
-    data.defaults))
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(80, maxlength), open_ended="upper")),    
+    data_defaults))

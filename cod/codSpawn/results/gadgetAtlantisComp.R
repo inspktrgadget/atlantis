@@ -2,7 +2,7 @@ library(mfdb)
 library(mfdbatlantis)
 library(tidyverse)
 setwd('~/gadget/models/atlantis')
-gadget_st_year <- 1983
+gadget_st_year <- 1968
 
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
 
@@ -74,7 +74,7 @@ bm.scale.diff.plot <-
 #######################################
 cod.numbers <- 
     is_fg_count %>% 
-    filter(month == 4) %>%
+    filter(month == 4, age >= 2) %>%
     group_by(year) %>% 
     summarize(atl.number = sum(count))
 gad.numbers <- 
