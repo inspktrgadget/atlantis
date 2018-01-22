@@ -1,21 +1,21 @@
 ## setup landings for long line fishery
-comm.landings <- mfdb_sample_totalweight(mdb, NULL,
+comm_landings <- mfdb_sample_totalweight(mdb, NULL,
                               c(list(
                                   gear = "BMT",
                                   sampling_type="Cat",
-                                  species=model.defaults$species), model.defaults))
+                                  species=model_defaults$species), model_defaults))
 
 ## setup discards for long line fishery
 # discards <- mfdb_sample_totalweight(mdb, NULL,
 #                                         c(list(
 #                                             gear = "BMT",
 #                                             sampling_type="Discard",
-#                                             species=data.defaults$species), data.defaults))
+#                                             species=data_defaults$species), data_defaults))
 
 ## set up and make surveys as fleet
-igfs.landings <- structure(data.frame(year=data.defaults$year, step=2, area=1, number=1),
+spr_landings <- structure(data.frame(year=data_defaults$year, step=2, area=1, number=1),
                            area_group=mfdb_group(`1` = 1))
-aut.landings <- structure(data.frame(year=data.defaults$year, step=3, area=1, number=1),
+aut_landings <- structure(data.frame(year=data_defaults$year, step=3, area=1, number=1),
           area_group=mfdb_group(`1` = 1))
 
 
@@ -26,21 +26,21 @@ gadgetfleet("Modelfiles/fleet", gd$dir, missingOkay=T) %>%
                                            stock = stock, 
                                            fun = "newexponentiall50",
                                            params = list("alpha", "l50")),
-                  data=igfs.landings) %>%
+                  data=spr_landings) %>%
     gadget_update("totalfleet",
                   name = "aut",
                   suitability = fleet_suit(fleet = "aut", 
                                            stock = stock, 
                                            fun = "newexponentiall50",
                                            params = list("alpha", "l50")),
-                  data = aut.landings) %>%
+                  data = aut_landings) %>%
     gadget_update("totalfleet",
                   name = "comm",
                   suitability = fleet_suit(fleet="comm", 
                                            stock=stock, 
                                            fun="newexponentiall50",
                                            params=list("alpha", "l50")),
-                  data = comm.landings[[1]]) %>%
+                  data = comm_landings[[1]]) %>%
     # gadget_update("totalfleet",
     #               name = "discards",
     #               suitability = fleet.suit("discards", stocknames, "exponentiall50"),
