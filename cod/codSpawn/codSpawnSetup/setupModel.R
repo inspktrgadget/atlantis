@@ -21,9 +21,72 @@ atl_init_sigma <-
 weight_alpha <- 0.0000021
 weight_beta <- 3.3437
 
-# age_mean_formula <- "exp(-1*(%2$s.M+%3$s.init.F)*%1$s)*%2$s.init.%1$s"
-rec_number <- sprintf("%1$s.rec.scalar*%1$s.rec.%2$s", species_name, year_range)
-rec_sd <- sprintf("#%s.rec.sd", species_name)
+# age.mean.formula <- "exp(-1*(%2$s.M+%3$s.init.F)*%1$s)*%2$s.init.%1$s"
+rec.number <- sprintf("%1$s.rec.scalar*%1$s.rec.%2$s", species.name, year.range)
+rec.sd <- sprintf("#%s.rec.sd", species.name)
+
+cod0 <- 
+    gadgetstock("cod0", gd$dir, missingOkay=T) %>%
+    gadget_update("stock",
+                  minage = 0,
+                  maxage = 1,
+                  minlength = 1,
+                  maxlength = 60,
+                  dl = 5,
+                  livesonareas = 1) %>%
+    gadget_update("doesgrow",
+                  growthparameters=c(linf=sprintf("#%s.linf", species.name), 
+                                     k=sprintf("#%s.k", species.name),
+                                     alpha=weight.alpha,
+                                     beta=weight.beta),
+                  beta=sprintf("(* 10 #%s.bbin)", species.name)) %>%
+    # gadget_update("naturalmortality", # estimate m for each age
+    #               sprintf("#%1$s.age%2$s.m", 
+    #                       species.name, 
+    #                       .[[1]]$minage:.[[1]]$maxage)) %>%
+    gadget_update("naturalmortality", # m as a function of age
+                  m_estimate_formula(age=.[[1]]$minage:.[[1]]$maxage,
+                                     m=sprintf("%s.m.decay", species.name),
+                                     max.m=sprintf("%s.max.m", species.name),
+                                     min.m=sprintf("%s.min.m", species.name))) %>%
+    gadget_update("initialconditions",
+                  normalparam=
+                      data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
+                                 area = 1,
+                                 # age.factor = sprintf("(* 10 #%1$s.init%2$s)",
+                                 #                      species.name,
+                                 #                      age),
+                                 age.factor=init_age_factor(age=age,
+                                                            m=sprintf("%s.init.decay", 
+                                                                      species.name),
+                                                            age.scalar=sprintf("%s.init.scalar", 
+                                                                               species.name),
+                                                            init.min=sprintf("%s.init.min", 
+                                                                             species.name)),
+                                 area.factor=sprintf("( * #%1$s.mult #%1$s.init.abund)",
+                                                     species.name),
+                                 mean = vonb_formula(.[[1]]$minage:.[[1]]$maxage,
+                                                     linf=sprintf("%s.linf", species.name),
+                                                     k=sprintf("%s.k", species.name),
+                                                     recl=sprintf("%s.recl", species.name)),
+                                 stddev = init.sigma$ms[1:2],
+                                 alpha = weight.alpha,
+                                 beta = weight.beta)) %>%
+    gadget_update("refweight",
+                  data=data_frame(length=seq(.[[1]]$minlength,
+                                             .[[1]]$maxlength,
+                                             .[[1]]$dl),
+                                  mean = weight.alpha*length^weight.beta)) %>%
+    gadget_update("iseaten", 1) %>%
+    # gadget_update("doesmature", 
+    #               maturityfunction = "continuous",
+    #               maturestocksandratios = sprintf("%smat 1",species_name),
+    #               coefficients = sprintf("( * 0.001 #%1$s.mat1) #%1$s.mat2 0 0",
+    #                                         species_name)) %>% 
+    gadget_update("doesmove",
+                  transitionstocksandratios = sprintf("%s 1", species.name),
+                  transitionstep = 4)
+
 
 
 cod <- 
@@ -86,7 +149,7 @@ cod <-
                                                                         "#cod.spawn.l50"))))
 
 
-
+write.gadget.fit(cod0, gd$dir)
 write.gadget.file(cod, gd$dir)
 
 
