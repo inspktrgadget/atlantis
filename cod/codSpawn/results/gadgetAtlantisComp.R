@@ -2,7 +2,7 @@ library(mfdb)
 library(mfdbatlantis)
 library(tidyverse)
 setwd('~/gadget/models/atlantis')
-gadget_st_year <- 1968
+gadget_st_year <- min(fit$stock.std$year)
 
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
 
@@ -71,30 +71,7 @@ bm.scale.diff.plot <-
 
 #######################################
 ## to check numbers instead of biomass
-#######################################
-cod.numbers <- 
-    is_fg_count %>% 
-    filter(month == 4, age >= 2) %>%
-    group_by(year) %>% 
-    summarize(atl.number = sum(count))
-gad.numbers <- 
-    fit$stock.std %>%
-    filter(step == 1) %>%
-    group_by(year) %>%
-    summarize(total.number = sum(number))
-atl.gad.numbers <- 
-    left_join(gad.numbers, cod.numbers) %>%
-    mutate(scale.diff = total.number / atl.number)
-
-numbers.comp.plot <- 
-    ggplot(data=filter(atl.gad.numbers, year < 2013), aes(x=year)) + 
-    geom_line(aes(y=total.number/1e6, color='Gadget')) +
-    geom_line(aes(y=atl.number/1e6, color='Atlantis')) +
-    scale_color_manual('', breaks=c('Gadget', 'Atlantis'), values=c('red', 'black')) +
-    theme_bw() + xlab('Year') + ylab('Numbers (millions of fish)') + 
-    theme(axis.text = element_text(size = 15),
-          axis.title = element_text(size = 17),
-          legend.text = element_text(size = 15))
+number
 
 nmb.scale.diff.plot <- 
     ggplot(data=atl.gad.numbers, aes(x=year, y=scale.diff)) + geom_line() +
