@@ -10,7 +10,9 @@ library(plyr)
 library(tidyverse)
 library(grid)
 library(Rgadget)
-setwd("~/gadget/models/atlantis/cod/codSpawn/codSpawnModel")
+gadmod <- "~/gadget/models/atlantis/cod/codSpawn/codSpawnModel"
+codver <- "~/gadget/models/atlantis/cod/codVersions/codSpawn12"
+setwd(codver)
 fit <- gadget.fit(wgts="WGTS", main.file="WGTS/main.final",
                   fleet.predict = data.frame(fleet = "comm", ratio=1),
                   mat.par=c(-6.510198, 1.108594),

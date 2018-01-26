@@ -21,14 +21,14 @@ read.gadget.parameters(sprintf("%s/params.out", gd$dir)) %>%
     #init_params("rec.[0-9]", 100, 1e-05, 10000, 1) %>%
     # init_params("discards.alpha", 0.066, 0.001, 3, 1) %>%
     # init_params("discards.l50", 70, 0, 120, 1) %>%
-    init_params("spawn.alpha", -2, -5, 5, 1) %>%
-    init_params("spawn.l50", 55, 20, 65, 1) %>%
+    # init_params("spawn.alpha", -2, -5, 5, 1) %>%
+    # init_params("spawn.l50", 55, 20, 65, 1) %>%
     # init_params("cod.spawn.m", 0.1, 0, 1, 1) %>%
     # init_params("wl.alpha", -0.5, -999, 0, 1) %>%
     # init_params("wl.l50", 50, -200, 200, 1) %>%
-    init_params("bh.mu", 3e+11, 1e+09, 1e+12, 1) %>%
+    init_params("bh.mu", 1e+08, 1e+08, 1e+12, 1) %>%
     init_params("bh.lam", 1.067416e+08, 1e+07, 3e+09, 1) %>%
-    init_params("rec.len", 25, 10, 35, 1) %>%
+    init_params("rec.len", 23.5805761, 10, 35, 1) %>%
     init_params("rec.sd", 1, 0.5, 10, 1) %>%
     init_params("spr.alpha", 0.046, 0.001, 3, 1) %>%
     init_params("spr.l50", 49, 5, 120, 1) %>%

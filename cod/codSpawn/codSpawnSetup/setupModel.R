@@ -45,7 +45,7 @@ stock0_length_sd <- init_sigma$ms[c(((stock0_minage)+1):((stock0_maxage)+1))]
 
 # setup stockfile for young, unfished stock
 cod0 <- 
-    gadgetstock("cod0", gd$dir, missingOkay=T) %>%
+    gadgetstock(stock0, gd$dir, missingOkay=T) %>%
     gadget_update("stock",
                   minage = stock0_minage,
                   maxage = stock0_maxage,
@@ -95,8 +95,74 @@ cod0 <-
                   transitionstocksandratios = sprintf("%s 1", species_name),
                   transitionstep = 4)
 
+
+# setup some stockfile parameters for fished, but not mature stock
+stock2_minage <- 2
+stock2_maxage <- 3
+stock2_age_range <- stock2_minage:stock2_maxage
+stock2_init_age <- 
+    init_age_factor(init_max=sprintf("%s.init.max", species_name),
+                    init_min=sprintf("%s.init.min", species_name),
+                    init_decay=sprintf("%s.init.decay", species_name),
+                    age=stock2_age_range)
+stock2_m <- 
+    m_estimate_formula(max_m=sprintf("%s.max.m", species_name),
+                       min_m=sprintf("%s.min.m", species_name),
+                       m_decay=sprintf("%s.m.decay", species_name),
+                       age=stock2_minage:stock2_maxage)
+stock2_meanlength <- 
+    vonb_formula(linf=sprintf("%s.linf", species_name),
+                 k=sprintf("%s.k", species_name),
+                 recl=sprintf("%s.recl", species_name),
+                 age = stock2_age_range)
+stock2_length_sd <- 
+    init_sigma$ms[c(((stock2_minage)+1):((stock2_maxage)+1))]
+
+# setup stockfile for older, fished stock
+cod2 <- 
+    gadgetstock(stock2, gd$dir, missingOkay=T) %>%
+    gadget_update("stock",
+                  minage = stock2_minage,
+                  maxage = stock2_maxage,
+                  minlength = 1,
+                  maxlength = 120,
+                  dl = 5,
+                  livesonareas = 1) %>%
+    gadget_update("doesgrow",
+                  growthparameters=c(linf=sprintf("#%s.linf", species_name), 
+                                     k=sprintf("#%s.k", species_name),
+                                     alpha=weight_alpha,
+                                     beta=weight_beta),
+                  beta=sprintf("(* #%1$s.bbin.mult #%1$s.bbin)", species_name)) %>%
+    # gadget_update("naturalmortality", # m for each age
+    #               sprintf("#%1$s.age%2$s.m", 
+    #                       .[[1]]$stockname, 
+    #                       .[[1]]$minage:.[[1]]$maxage)) %>%
+    gadget_update("naturalmortality", # m as a function of age
+                  stock2_m) %>%
+    gadget_update("initialconditions",
+                  normalparam=
+                      data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
+                                 area = 1,
+                                 age.factor=stock2_init_age,
+                                 area.factor=sprintf("( * #%1$s.init.scalar #%1$s.init.abund)",
+						     species_name),
+                                 mean = stock2_meanlength,
+                                 stddev = stock2_length_sd,
+                                 alpha = weight_alpha,
+                                 beta = weight_beta)) %>%
+    gadget_update("refweight",
+                  data=data_frame(length=seq(.[[1]]$minlength,
+                                             .[[1]]$maxlength,
+                                             .[[1]]$dl),
+                                  mean = weight_alpha*length^weight_beta)) %>%
+    gadget_update("iseaten", 1)
+
+
+
+
 # setup some stockfile parameters for fished stock
-stock_minage <- 2
+stock_minage <- 4
 stock_maxage <- 12
 stock_age_range <- stock_minage:stock_maxage
 stock_init_age <- 
@@ -159,13 +225,11 @@ cod <-
     gadget_update("doesspawn",
                   spawnfile = eval(spawnfile(., st_year, end_year,
                                              spawnstocksandratios = paste(stock0,
-                                                                          1, sep = "\t"),
-                                             proportionfunction = paste("exponential",
-                                                                        "#cod.spawn.alpha",
-                                                                        "#cod.spawn.l50"))))
+                                                                          1, sep = "\t"))))
 
 
 write.gadget.file(cod0, gd$dir)
+write.gadget.file(cod2, gd$dir)
 write.gadget.file(cod, gd$dir)
 
 
