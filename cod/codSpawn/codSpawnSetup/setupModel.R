@@ -92,7 +92,7 @@ cod0 <-
     #               coefficients = sprintf("( * 0.001 #%1$s.mat1) #%1$s.mat2 0 0",
     #                                         species_name)) %>% 
     gadget_update("doesmove",
-                  transitionstocksandratios = sprintf("%s 1", species_name),
+                  transitionstocksandratios = sprintf("%s 1", stock2),
                   transitionstep = 4)
 
 
@@ -156,7 +156,10 @@ cod2 <-
                                              .[[1]]$maxlength,
                                              .[[1]]$dl),
                                   mean = weight_alpha*length^weight_beta)) %>%
-    gadget_update("iseaten", 1)
+    gadget_update("iseaten", 1) %>%
+    gadget_update("doesmove",
+                  transitionstocksandratios = sprintf("%s 1", stock),
+                  transitionstep = 4)
 
 
 
