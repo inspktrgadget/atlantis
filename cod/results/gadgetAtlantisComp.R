@@ -140,7 +140,7 @@ theme(axis.text = element_text(size = 15),
 #######################################
 cod_numbers <- 
     is_fg_count %>% 
-    filter(month == 4) %>%
+    filter(month == 3) %>%
     group_by(year) %>% 
     summarize(atl_number = sum(count))
 gad_numbers <- 
@@ -153,7 +153,7 @@ atl_gad_numbers <-
     mutate(scale_diff = gad_number / atl_number)
 
 numbers_comp_plot <- 
-    ggplot(data=filter(atl_gad_numbers, year < 2013), aes(x=year)) + 
+    ggplot(data=filter(atl_gad_numbers, year < 2011), aes(x=year)) + 
     geom_line(aes(y=gad_number/1e6, color="gadget")) +
     geom_line(aes(y=atl_number/1e6, color="atlantis")) +
     scale_color_manual(name = "",
@@ -166,13 +166,13 @@ numbers_comp_plot <-
           legend.text = element_text(size = 15))
 
 nmb_scale_diff_plot <- 
-ggplot(data=atl_gad_numbers, aes(x=year, y=scale_diff)) + geom_line() +
-geom_hline(yintercept = 1, linetype="dashed") +
-ylim(0,pmax(1.5, max(atl_gad_numbers$scale_diff, na.rm=T))) +
-theme_bw() + xlab("Year") + ylab("Relative difference in numbers") + 
-theme(axis.text = element_text(size = 15),
-      axis.title = element_text(size = 17),
-      legend.text = element_text(size = 15))
+    ggplot(data=atl_gad_numbers, aes(x=year, y=scale_diff)) + geom_line() +
+    geom_hline(yintercept = 1, linetype="dashed") +
+    ylim(0,pmax(1.5, max(atl_gad_numbers$scale_diff, na.rm=T))) +
+    theme_bw() + xlab("Year") + ylab("Relative difference in numbers") + 
+    theme(axis.text = element_text(size = 15),
+          axis.title = element_text(size = 17),
+          legend.text = element_text(size = 15))
 
 
 #######################################
@@ -199,7 +199,7 @@ gad_age_numbers <-
 
 atl_age_numbers <- 
     is_fg_count %>%
-    filter(month == 4, count >= 1) %>%
+    filter(month == 3, count >= 1) %>%
     mutate(age = ifelse(age >= 12, 12, age)) %>%
     group_by(year, age) %>%
     summarize(atl_number = sum(count))
@@ -207,7 +207,7 @@ atl_age_numbers <-
 atl_gad_age_numbers <- left_join(gad_age_numbers, atl_age_numbers)
 
 age_numbers_plot <-
-    ggplot(data=filter(atl_gad_age_numbers), 
+    ggplot(data=filter(atl_gad_age_numbers, year < 2011), 
            aes(x=year, y=gad_number/1e6, color="gadget")) + geom_line() + 
     geom_line(aes(x=year, y=atl_number/1e6, color="atlantis")) + 
     facet_wrap(~age, scales="free_y") + 

@@ -47,25 +47,6 @@ gadgetlikelihood("likelihood", gd$dir, missingOkay=T) %>%
                   data = aldist_comm[[1]],
                   fleetnames = c("comm"),
                   stocknames = stock) %>%
-    # gadget_update("catchdistribution",
-    #               name = "ldist_discards",
-    #               weight = 1,
-    #               data = ldist_discards[[1]],
-    #               fleetnames = c("discards"),
-    #               stocknames = stock) %>%
-    # gadget_update("catchdistribution",
-    #               name = "aldist_discards",
-    #               weight = 1,
-    #               data = aldist_discards[[1]],
-    #               fleetnames = c("discards"),
-    #               stocknames = stock) %>%
-    #    gadget_update("surveyindices",
-    #                  name = "spr_si_0_20",
-    #                  weight = 1,
-    #                  data = spr_si_0_20[[1]],
-    #                  fittype = "fixedslopeloglinearfit",
-    #                  slope = 1,
-    #                  stocknames = stock) %>%
     gadget_update("surveyindices",
                   name = "spr_si_20_35",
                   weight = 1,
@@ -101,13 +82,6 @@ gadgetlikelihood("likelihood", gd$dir, missingOkay=T) %>%
                   fittype = "fixedslopeloglinearfit",
                   slope = 1,
                   stocknames = stock) %>%
-    #    gadget_update("surveyindices",
-    #                  name = "aut_si_0_20",
-    #                  weight = 1,
-    #                  data = aut_si_0_20[[1]],
-    #                  fittype = "fixedslopeloglinearfit",
-    #                  slope = 1,
-    #                  stocknames = stock) %>%
     gadget_update("surveyindices",
                   name = "aut_si_20_35",
                   weight = 1,

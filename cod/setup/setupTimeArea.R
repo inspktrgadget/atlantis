@@ -1,6 +1,5 @@
 # setup time and area files
 
-
 ## write out area and time files
 gadgetfile("time",
            file_type = "time",

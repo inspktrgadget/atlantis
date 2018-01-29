@@ -25,19 +25,16 @@ source(sprintf("%s/setupDefaults.R", setup_d))
 # setup and write out time and area files
 source(sprintf("%s/setupTimeArea.R", setup_d))
 
-# update fleets and/or models
+# setup fleets and model
 source(sprintf("%s/setupFleet.R", setup_d))
 source(sprintf("%s/setupModel.R", setup_d))
 
-# run gadget -s -log logfile.txt from terminal
-
-# update params and likelihood components
+# setup params and likelihood components
 source(sprintf("%s/setupCatchDistribution.R", setup_d))
 source(sprintf("%s/setupIndices.R", setup_d))
 source(sprintf("%s/setupLikelihood.R", setup_d))
 source(sprintf("%s/setupParams.R", setup_d))
 
-file.copy(sprintf("%s/itterfitter.sh", setup_d), gd$dir)
 file.copy(sprintf("%s/run.R", setup_d), gd$dir)
 file.copy(sprintf("%s/mfrun.R", setup_d), gd$dir)
 file.copy(sprintf("%s/optinfofile", setup_d), gd$dir)

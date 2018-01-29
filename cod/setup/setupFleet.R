@@ -3,7 +3,7 @@ comm_landings <- mfdb_sample_totalweight(mdb, NULL,
                               c(list(
                                   gear = "BMT",
                                   sampling_type="Cat",
-                                  species=model_defaults$species), model_defaults))
+                                  species=model_defaults$species), data_defaults))
 
 ## setup discards for long line fishery
 # discards <- mfdb_sample_totalweight(mdb, NULL,

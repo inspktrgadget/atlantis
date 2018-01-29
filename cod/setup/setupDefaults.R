@@ -1,7 +1,6 @@
 # defaults for time, species, area
 
 areas <- read.csv("atlantisInfo/boxInfo.csv", header=T)
-#boxes <- filter(areas, boundary == 0)$box_id
 boxes <- sprintf("Box%s", filter(areas, boundary == 0)$box_id)
 
 st_year <- 1970
