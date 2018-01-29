@@ -1,0 +1,12 @@
+
+mod4
+trying mod3 below but with total landings from 1960-1968 removed
+
+mod3
+initial values were too high in previous model; reduced the maximum initial values; started model in 1955; fixed all selectivity
+
+mod2
+the model below was just steady-state all the way through, so I tweaked a few more parameters and estimating growth now
+
+mod1
+tweaked some of the parameters a bit. mostly tightened up the lower and upper bounds on things. trying a model with growth as fixed.

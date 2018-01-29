@@ -1,6 +1,8 @@
 *.Rhistory
 *.RData
 *.Rdata
+*.pdf
+*.html
 cod/codVersions/*
 cod/codModel/*
 atlantisInfo/*
