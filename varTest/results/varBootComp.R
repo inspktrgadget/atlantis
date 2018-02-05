@@ -39,7 +39,7 @@ numbersCompPlot <-
                     fatten = 2,
                     position = position_dodge(width = 0.6), show.legend = FALSE) +
     geom_line(aes(y=total.number_median, color = model), alpha = 0.8) + 
-    geom_line(data=filter(atl_numbers, month == 4, year > 1969),
+    geom_line(data=filter(atl_numbers, month == 3, year > 1969),
               aes(x=year, y=atl.number, color = "atlMod")) + 
     xlab("Year") + ylab("Total number (millions)") + theme_bw() + 
     scale_fill_manual(name = "Models",

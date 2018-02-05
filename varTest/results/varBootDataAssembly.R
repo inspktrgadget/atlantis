@@ -78,7 +78,7 @@ gadget_ssb_summary_by_age <-
 
 #-------------------------------------------------------------------------
 # read in atlantis data
-gadget_st_year <- 1983
+gadget_st_year <- 1980
 
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
 
@@ -110,6 +110,7 @@ atl_numbers <-
 atl_numbers_by_age <- 
     is_fg_count %>%
     filter(count >= 1) %>%
+    mutate(age = ifelse(age >= 12, 12, age)) %>%
     group_by(year, month, age) %>%
     summarize(atl.number = sum(count) / 1e6)
 
@@ -134,11 +135,13 @@ atl_ssb <-
 # compute biomass by age
 atl_total_biomass_by_age <- 
     atl_biomass %>%
+    mutate(age = ifelse(age >= 12, 12, age)) %>%
     group_by(year, month, age) %>%
     summarize(atl.biomass = sum(biomass) / 1e9)
 
 atl_ssb_by_age <- 
     atl_biomass %>%
     filter(maturity_stage > 1) %>%
+    mutate(age = ifelse(age >= 12, 12, age)) %>%
     group_by(year, month, age) %>%
     summarize(atl.ssb = sum(biomass) / 1e9)

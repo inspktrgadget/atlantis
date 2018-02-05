@@ -3,6 +3,7 @@
 # respective model directories in this results folder
 
 library(tidyverse)
+library(parallel)
 
 basedir <- "~/gadget/models/atlantis/varTest"
 setwd(basedir)
@@ -33,16 +34,16 @@ lapply(models, function(x) {
         halfBoot = "errBootRuns/bootrun_var0.147/BS.WGTS",
         fullBoot = "errBootRuns/bootrun_var0.3/BS.WGTS"
     )
-    sub_models <- list.dirs(model_dir, recursive = FALSE)
+    sub_models <- dir(model_dir)
     
     # read gadget.fit results into list
-    fit <- lapply(sub_models, function(y) {
-        load(paste(y, "WGTS/WGTS.Rdata", sep = "/"))
+    fit <- mclapply(sub_models, function(y) {
+        load(paste(model_dir, y, "WGTS/WGTS.Rdata", sep = "/"))
         stock_std <- out$stock.std
         model_num <- gsub("[^0-9]", "", y)
         stock_std$model_index <- model_num
         return(stock_std)
-    })
+    }, mc.cores = 4)
     
     # merge datasets together and summarize at year/step
     res_by_step <- 

@@ -1,23 +1,21 @@
 library(plyr)
 library(tidyverse)
+library(parallel)
 library(Rgadget)
 
-homeDir <- "~/gadget/models/atlantis/varTest"
+homeDir <- "~/gadget/models/atlantis/varTest/varModels"
 setwd(homeDir)
-varModels <- round(seq(0, 0.3, length.out = 50), 3)
-indx <- 47:50
-for (x in varModels[indx]) {
-    setwd(homeDir)
-    setwd(sprintf("varModels/varModel_%s", x))
-    cat("Fitting varModel ", x, "\n")
-    tmp_fit <- gadget.fit(wgts="WGTS", main.file='WGTS/main.final',
-                  fleet.predict = data.frame(fleet = 'comm', ratio=1),
-                  mat.par=c(-6.510198, 1.108594),
-                  printfile.printatstart = 0,
-                  printfile.steps = "all",
-                  rec.len.param = TRUE)
-    dir.create("WGTS/out.fit/gadget.fit")
-    save(tmp_fit, file = "WGTS/out.fit/gadget.fit/modelFit.Rdata")
-    rm(tmp_fit)
-    closeAllConnections()
-}
+file.create("gadgetFitOutput")
+#mod_dir <- dir("varModels")
+mod_dir <- sprintf("varModel_%s", c(0.269, 0.276, 0.282, 0.288, 0.294, 0.3))
+null_list <- 
+    mclapply(mod_dir, function(x) {
+        cat("Fitting ", x, "\n")
+        sink(file = "gadgetFitOutput", append = TRUE)
+        tmp_fit <- gadget.fit(wgts = sprintf("varModels/%s/WGTS", x),
+                              main.file = sprintf("varModels/%s/WGTS/main.final", x),
+                              printfile.printatstart = 0,
+                              printfile.steps = "all",
+                              rec.len.param = TRUE)
+        sink()
+    }, mc.cores = 4)
