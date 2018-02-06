@@ -43,10 +43,9 @@ gadgetTest/zbraSetup/zbramodelsetupcode.zip
 gadgetTest/zbraSetup/area
 gadgetTest/results/*.pdf
 gadgetTest/results/*.html
-varTest/bootstrapRun
-varTest/errBootRuns
 varTest/varModels
 varTest/varTestVersions
 varTest/results/varMod/varMod.RData
+varTest/bootruns
 cod/test
 cod/test2
