@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(parallel)
+library(methods)
 
 basedir <- "~/gadget/models/atlantis/varTest"
 setwd(basedir)
@@ -30,9 +31,9 @@ lapply(models, function(x) {
     model_dir <- switch(
         x,
         varMod = "varModels/varModels",
-        bootMod = "bootstrapRun/BS.WGTS",
-        halfBoot = "errBootRuns/bootrun_var0.147/BS.WGTS",
-        fullBoot = "errBootRuns/bootrun_var0.3/BS.WGTS"
+        bootMod = "bootruns/bootrun_var0/BS.WGTS",
+        halfBoot = "bootruns/bootrun_var0.147/BS.WGTS",
+        fullBoot = "bootruns/bootrun_var0.3/BS.WGTS"
     )
     sub_models <- dir(model_dir)
     

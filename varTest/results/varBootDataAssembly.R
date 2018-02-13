@@ -78,7 +78,6 @@ gadget_ssb_summary_by_age <-
 
 #-------------------------------------------------------------------------
 # read in atlantis data
-gadget_st_year <- 1980
 
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
 

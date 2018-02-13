@@ -11,7 +11,10 @@ library(gridExtra)
 
 # read in formatted gadget results
 setwd("~/gadget/models/atlantis/varTest/results")
+gadget_st_year <- 1980
+gadget_end_year <- 2010
 source("varBootDataAssembly.R")
+
 
 # set up plot legend objects
 theme_palette <- brewer.pal(5, "Set2")
@@ -21,8 +24,8 @@ theme_values <- c("atlMod" = theme_palette[1],
                   "halfBoot" = theme_palette[4], "fullBoot" = theme_palette[5])
 theme_labels <- c("varMod" = "EEM", 
                   "bootMod" = expression("BEM"[0]),
-                  "halfBoot" = expression("BEM"[0.5]),
-                  "fullBoot" = expression("BEM"[1]),
+                  "halfBoot" = expression("BEM"[0.147]),
+                  "fullBoot" = expression("BEM"[0.3]),
                   "atlMod" = "Atlantis")
 
 
@@ -42,6 +45,7 @@ numbersCompPlot <-
     geom_line(data=filter(atl_numbers, month == 3, year > 1969),
               aes(x=year, y=atl.number, color = "atlMod")) + 
     xlab("Year") + ylab("Total number (millions)") + theme_bw() + 
+    xlim(1979.5, 2010.5) + ylim(750, 1600) + 
     scale_fill_manual(name = "Models",
                       breaks = theme_breaks,
                       values = theme_values,
@@ -66,6 +70,7 @@ biomassCompPlot <-
     geom_line(data=filter(atl_total_biomass, year > 1969, month == 4), 
               aes(x=year, y=atl.biomass, color = "atlMod")) +
     xlab("Year") + ylab("Total biomass (thousands of tons)") + theme_bw() +
+    xlim(1979.5, 2010.5) + ylim(600, 2000) + 
     scale_fill_discrete(guide = FALSE) + 
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
@@ -86,6 +91,7 @@ ssbCompPlot <-
     geom_line(data=filter(atl_ssb, year > 1969, month == 4), 
               aes(x=year, y=atl.ssb, color = "atlMod")) +
     xlab("Year") + ylab("SSB (thousands of tons)") + theme_bw() +
+    xlim(1979.5, 2010.5) + ylim(500, 1600) + 
     scale_fill_discrete(guide = FALSE) + 
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
@@ -111,6 +117,7 @@ ageNumbersCompPlot <-
               aes(x=year, y=atl.number, color = "atlMod")) + 
     facet_wrap(~age, scales = "free_y") + 
     xlab("Year") + ylab("Total number (millions)") + theme_bw() + 
+    xlim(1979.5, 2010.5) + 
     scale_fill_discrete(guide = FALSE) + 
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
@@ -132,6 +139,7 @@ ageBiomassCompPlot <-
               aes(x=year, y=atl.biomass, color = "atlMod")) +
     facet_wrap(~age, scales = "free_y") + 
     xlab("Year") + ylab("Total biomass (thousands of tons)") + theme_bw() +
+    xlim(1979.5, 2010.5) + 
     scale_fill_discrete(guide = FALSE) + 
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
@@ -153,6 +161,7 @@ ageSSBcompPlot <-
               aes(x=year, y=atl.ssb, color = "atlMod")) +
     facet_wrap(~age, scales = "free_y") +
     xlab("Year") + ylab("SSB (thousands of tons)") + theme_bw() +
+    xlim(1979.5, 2010.5) +
     scale_fill_discrete(guide = FALSE) + 
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
@@ -166,10 +175,10 @@ ageSSBcompPlot <-
 
 # compare number densities
 numbersCompDens <- 
-    ggplot(data=filter(res_by_step, step == 1, year > 1982), 
+    ggplot(data=filter(res_by_step, step == 1, year >= gadget_st_year, year <= gadget_end_year), 
            aes(x=total.number/1e6, fill = model, color = model)) + 
     geom_density(alpha = 0.5) +
-    geom_vline(data=filter(atl_numbers, year > 1982, year < 2013, month == 4),
+    geom_vline(data=filter(atl_numbers, year >= gadget_st_year, year <= gadget_end_year, month == 4),
                aes(xintercept = atl.number), color = "black") +
     facet_wrap(~year) + 
     theme_bw() + xlab("Total number (millions)") + ylab("Density") + 
@@ -177,15 +186,19 @@ numbersCompDens <-
     scale_fill_manual(name = "Models",
                       breaks = theme_breaks,
                       values = theme_values,
-                      labels = theme_labels)
+                      labels = theme_labels) + 
+    theme(legend.text.align = 0)
+
 
 
 # compare densities of biomass
 biomassCompDens <- 
-    ggplot(data=filter(res_by_step, step == 1, year > 1982), 
+    ggplot(data=filter(res_by_step, step == 1, year >= gadget_st_year, year <= gadget_end_year), 
            aes(x=total.biomass/1e6, fill = model, color = model)) + 
     geom_density(alpha = 0.2) +
-    geom_vline(data=filter(atl_biomass, year > 1982, year < 2013),
+    geom_vline(data=filter(atl_total_biomass, 
+                           year >= gadget_st_year, year <= gadget_end_year,
+                           month == 4),
                aes(xintercept = atl.biomass), color = "black") +
     facet_wrap(~year) + theme_bw() + xlab("Total biomass (thousands of tons)") + ylab("Density") + 
     scale_fill_manual(name = "Models",
@@ -195,15 +208,17 @@ biomassCompDens <-
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
                        values = theme_values,
-                       labels = theme_labels)
+                       labels = theme_labels) + 
+    theme(legend.text.align = 0)
+
 
 
 # compare densities of ssb
 ssbCompDens <- 
-    ggplot(data=filter(gadget_ssb, step == 1, year > 1982), 
-           aes(x=ssb/1e6, fill = model, color = model)) + 
+    ggplot(data=filter(gadget_ssb, step == 1, year >= gadget_st_year, year <= gadget_end_year), 
+           aes(x=ssb, fill = model, color = model)) + 
     geom_density(alpha = 0.2) +
-    geom_vline(data=filter(atl_ssb, year > 1982, year < 2013, month == 4),
+    geom_vline(data=filter(atl_ssb, year >= gadget_st_year, year <= gadget_end_year, month == 4),
                aes(xintercept = atl.ssb), color = "black") +
     facet_wrap(~year) + theme_bw() + xlab("SSB (thousands of tons)") + ylab("Density") + 
     scale_fill_manual(name = "Models",
@@ -213,14 +228,16 @@ ssbCompDens <-
     scale_color_manual(name = "Models",
                        breaks = theme_breaks,
                        values = theme_values,
-                       labels = theme_labels)
+                       labels = theme_labels) + 
+    theme(legend.text.align = 0)
+
 
 
 #-------------------------------------------------------------------------
 # forest plots to show bias in numbers and ssb at age among models
 bias_data <- 
     res_by_step_age %>%
-    filter(step == 1, year > 1982) %>%
+    filter(step == 1, year >= gadget_st_year) %>%
     mutate(month = 4,
            age = age - (age %% 2)) %>%
     rename(gad.number = total.number,
@@ -425,10 +442,10 @@ biasForestPlots <-
 mod_levels <- c("varMod", "bootMod", "halfBoot", "fullBoot")
 mod_labels <- c("varMod" = "EEM", 
                 "bootMod" = expression("BEM"[0]),
-                "halfBoot" = expression("BEM"[0.5]),
-                "fullBoot" = expression("BEM"[1]))
+                "halfBoot" = expression("BEM"[0.147]),
+                "fullBoot" = expression("BEM"[0.3]))
 modVarPlot <- 
-    ggplot(data=filter(res_by_step, year > 1982), 
+    ggplot(data=filter(res_by_step, year >= gadget_st_year), 
            aes(x=factor(model, levels = mod_levels), y=total.number/1e6)) + 
     geom_boxplot() + theme_bw() + 
     xlab("\nModel Type") + ylab("Total number (millions)") + 
@@ -441,7 +458,7 @@ modVarPlot <-
 # total variance for each model type
 modVar <- 
     res_by_step %>%
-    filter(year > 1982) %>%
+    filter(year >= gadget_st_year) %>%
     group_by(model) %>%
     summarize(num.var = var(total.number), 
               bm.var = var(total.biomass))

@@ -10,7 +10,9 @@ library(plyr)
 library(tidyverse)
 library(grid)
 library(Rgadget)
-setwd("~/gadget/models/atlantis/cod/codVersions/codMod105")
+#setwd("~/gadget/models/atlantis/cod/codVersions/codMod105")
+mod_dir <- "~/gadget/models/atlantis/varTest/varTestVersions/varTestVer4"
+setwd(sprintf("%s/varModel_0.3_M_0.15", mod_dir))
 fit <- gadget.fit(wgts="WGTS", main.file="WGTS/main.final",
                   fleet.predict = data.frame(fleet = "comm", ratio=1),
                   mat.par=c(-6.510198, 1.108594),
