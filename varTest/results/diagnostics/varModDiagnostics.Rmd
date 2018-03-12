@@ -1,0 +1,282 @@
+---
+title:  "Cod Gadget-Atlantis Comparison"
+author: "Paul Frater"
+date:   ""
+output: html_document
+---
+```{r global_options, include=F}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+
+```{r, gadget results, include=FALSE}
+library(plyr)
+library(tidyverse)
+library(grid)
+library(Rgadget)
+
+load("~/gadget/models/atlantis/varTest/results/varMod/diagnostic_data.RData")
+
+# ## fit statistics - not a great way to do this for all varModels
+# resTable <- fit$resTable[tail(head(names(fit$resTable),-2),-1)]
+# 
+# summary_plot <-
+#     ggplot(filter(fit$likelihoodsummary, year != "all"),
+#            aes(as.numeric(year), likelihood.value)) +
+#     geom_point() + facet_wrap(~component, scales="free_y") +theme_bw()+
+#     xlab("Year") + ylab("Score")
+
+
+# plot the model survey data over the actual survey data
+si_spr <-
+    ggplot(subset(si_dat, survey=="igfs"), aes(year, obs_median)) +
+    geom_point() +
+    geom_line(aes(year,pred_median)) +
+    geom_ribbon(aes(x=year, ymin = pred_lower, ymax = pred_upper),
+                color = "green", alpha = 0.3) +
+    geom_linerange(data=subset(si_dat,year==max(year)),
+                   aes(year,ymax=obs_median,ymin=pred_median),col="green") +
+    geom_text(data=mutate(subset(si_dat,year==min(year)),y=Inf),
+              aes(year,y,label=length), vjust = 2,hjust = -1)+
+    facet_wrap(~length,scale="free_y",ncol=2) + theme_bw() +
+    ylab("Index") + xlab("Year") +
+    theme (panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank())
+
+si_aut <-
+    ggplot(subset(si_dat, survey=="aut"), aes(year, obs_median)) +
+    geom_point() +
+    geom_line(aes(year,pred_median)) +
+    geom_ribbon(aes(x=year, ymin = pred_lower, ymax = pred_upper),
+                color = "green", alpha = 0.3) +
+    geom_linerange(data=subset(si_dat,year==max(year)),
+                   aes(year,ymax=obs_median,ymin=pred_median),col="green") +
+    geom_text(data=mutate(subset(si_dat,year==min(year)),y=Inf),
+              aes(year,y,label=length), vjust = 2,hjust = -1)+
+    facet_wrap(~length,scale="free_y",ncol=2) + theme_bw() +
+    ylab("Index") + xlab("Year") +
+    theme (panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank())
+
+
+# plot the survey length-distribution data over the actual survey length-distribution data
+ldist_spr <-
+    ggplot(subset(ldist_data,name == "ldist_spr") ,
+           aes(lower,pred_median)) + geom_line() +
+    geom_line(aes(lower,observed), color="gray") +
+    geom_ribbon(aes(x=lower, ymin = pred_lower, ymax = pred_upper), 
+                fill = "green", alpha = 0.3) +
+    facet_wrap(~year+step) + theme_bw() + 
+    geom_text(data=mutate(subset(ldist_data,
+                                 name == "ldist_spr" & lower==min(lower)),y=Inf),
+              aes(lower,y,label=year), vjust = 2,hjust = -1)+
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Spring Lengths") +
+    theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank()) 
+
+ldist_aut <-
+    ggplot(subset(ldist_data,name == "ldist_aut") ,
+           aes(lower,pred_median)) + geom_line() +
+    geom_line(aes(lower,observed), color="gray") +
+    geom_ribbon(aes(x=lower, ymin = pred_lower, ymax = pred_upper), 
+                fill = "green", alpha = 0.3) +
+    facet_wrap(~year+step) + theme_bw() + 
+    geom_text(data=mutate(subset(ldist_data,
+                                 name == "ldist_aut" & lower==min(lower)),y=Inf),
+              aes(lower,y,label=year), vjust = 2,hjust = -1)+
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Autumn Lengths") +
+    theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank()) 
+
+
+# plot the model catchdistribution data over actual catchdistribution data
+ldist_catch <-
+    ggplot(subset(ldist_data,name == "ldist_comm") ,
+           aes(lower,pred_median)) + geom_line() +
+    geom_line(aes(lower,observed), color="gray") +
+    geom_ribbon(aes(x=lower, ymin = pred_lower, ymax = pred_upper), 
+                fill = "green", alpha = 0.3) +
+    facet_wrap(~year+step) + theme_bw() + 
+    geom_text(data=mutate(subset(ldist_data,
+                                 name == "ldist_comm" & lower==min(lower)),y=Inf),
+              aes(lower,y,label=year), vjust = 2,hjust = -1)+
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Commercial Lengths") +
+    theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank()) 
+
+
+
+
+aldist_spr <-
+    ggplot(data=filter(aldist_data, name=="aldist_spr"), 
+           aes(x=age, y=pred_median)) + 
+    geom_ribbon(aes(x=age, ymin = pred_lower, ymax = pred_upper),
+                fill = "green", alpha = 0.2) +
+    geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
+    facet_wrap(~year+step) + theme_bw() + 
+    geom_text(data=filter(aldist_data, name == "aldist_spr" & age == max(age)),
+              aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
+    ylab("Proportion") + xlab("Age") + ggtitle("Spring Ages") +
+    theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank()) 
+
+aldist_aut <-
+    ggplot(data=filter(aldist_data, name=="aldist_aut"), 
+           aes(x=age, y=pred_median)) + 
+    geom_ribbon(aes(x=age, ymin = pred_lower, ymax = pred_upper),
+                fill = "green", alpha = 0.2) +
+    geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
+    facet_wrap(~year+step) + theme_bw() + 
+    geom_text(data=filter(aldist_data, name == "aldist_aut" & age == max(age)),
+              aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
+    ylab("Proportion") + xlab("Age") + ggtitle("Autumn Ages") +
+    theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank()) 
+
+aldist_catch <-
+    ggplot(data=filter(aldist_data, name=="aldist_comm"), 
+           aes(x=age, y=pred_median)) + 
+    geom_ribbon(aes(x=age, ymin = pred_lower, ymax = pred_upper),
+                fill = "green", alpha = 0.2) +
+    geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
+    facet_wrap(~year+step) + theme_bw() + 
+    geom_text(data=filter(aldist_data, name == "aldist_comm" & age == max(age)),
+              aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
+    ylab("Proportion") + xlab("Age") + ggtitle("Commercial Sampling Ages") +
+    theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
+           strip.background = element_blank(), strip.text.x = element_blank()) 
+
+
+
+# plot suitability against length for both survey and commercial fleets
+selection_plot <-
+    ggplot(selection_data,
+           aes(x = length, y = suit_median, lty = fleet, color = stock)) +
+    geom_line() +
+    geom_ribbon(aes(x=length, ymin = suit_lower, ymax = suit_upper), 
+                alpha = 0.3) +
+    theme_bw() + ylab("Suitability") + xlab("Length") +
+    theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
+          plot.margin = unit(c(0,0,0,0),"cm"))
+
+
+# plot growth curve from model
+gr_plot <-
+    ggplot(grw_data,
+           aes(x = age, y = length_median)) + 
+    geom_line() +
+    geom_ribbon(aes(x=age, ymin = length_lower, ymax = length_upper),
+                alpha = 0.3) + 
+    theme_bw() + ylab("Length") + xlab("Age") +
+    theme(legend.position = c(0.9,0.75), legend.title = element_blank(),
+          plot.margin = unit(c(0,0,0,0),"cm"))
+
+f_plot <- 
+    ggplot(f_data, aes(year, f_median)) + 
+    geom_line() + 
+    geom_ribbon(aes(x=year, ymin = f_lower, ymax = f_upper),
+                alpha = 0.3) +
+    ylab("F") + xlab("Year") +  theme_bw() +
+    theme(legend.position=c(0.2, 0.8), legend.title = element_blank(),
+          plot.margin = unit(c(0,0,0,0),"cm"))
+
+```
+
+``` {r, atlantis results, include = FALSE}
+#  library(tidyverse)
+library(mfdb)
+library(mfdbatlantis)
+
+# setwd("~/gadget/models/atlantis")
+gadget_st_year <- 1970
+
+is_dir <- atlantis_directory("~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF")
+
+is_run_options <- atlantis_run_options(is_dir)
+
+# Read in areas / surface temperatures, insert into mfdb
+is_area_data <- atlantis_read_areas(is_dir)
+is_temp <- atlantis_temperature(is_dir, is_area_data)
+
+# Read in all functional groups, assign MFDB shortcodes where possible
+is_functional_groups <- atlantis_functional_groups(is_dir)
+is_functional_groups$MfdbCode <- vapply(
+    mfdb_find_species(is_functional_groups$LongName)["name",],
+    function (x) if (length(x) > 0) x[[1]] else as.character(NA), "")
+
+# assemble and import cod 
+fgName <- "Cod"
+fg_group <- is_functional_groups[c(is_functional_groups$Name == fgName),]
+is_fg_count <- atlantis_fg_tracer(is_dir, is_area_data, fg_group)
+```
+
+# Gadget-Atlantis Cod Comparison
+
+<!-- Add specific results/figures you want presented here-->
+
+
+# Gadget Diagnostics
+**----------------------------------------------------------------------------------**
+
+<!-- Add specific results/figures you want presented here-->
+
+
+## Survey Indices
+
+### Spring
+``` {r}
+si_spr
+```
+
+### Autumn
+``` {r}
+si_aut
+```
+
+## Ages and Lengths
+
+``` {r}
+ldist_spr
+```
+
+``` {r}
+ldist_aut
+```
+
+``` {r}
+ldist_catch
+```
+
+``` {r}
+aldist_spr
+```
+
+``` {r}
+aldist_aut
+```
+
+``` {r}
+aldist_catch
+```
+
+### Growth
+``` {r}
+gr_plot + geom_point(data=sample_n(is_fg_count, 10000), aes(x = age, y = length))
+```
+
+### Selection
+``` {r}
+selection_plot
+```
+
+
+### F
+``` {r}
+f_plot
+```

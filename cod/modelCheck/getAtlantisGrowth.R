@@ -1,6 +1,6 @@
-library(tidyverse)
 library(mfdb)
 library(mfdbatlantis)
+library(tidyverse)
 setwd('~/gadget/models/atlantis')
 source('../functions/vbParams.R')
 is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
@@ -27,7 +27,8 @@ atl_sub <-
     atl_cod %>%
     select(year, month, age, length, count) %>%
     group_by(year, month, age, length) %>%
-    summarize(count = sum(count))
+    summarize(count = sum(count)) %>%
+    ungroup()
 
 
 # compute growth parameters using nlm on functions in vbParams.R
@@ -42,11 +43,19 @@ nls_growth <- nls(length ~ vb(linf, k, t0, age), data=atl_sub,
 
 # looks pretty good, use parameters in vbMin for growth
 grPlot <- 
-    ggplot(data=atl_sub, aes(x=age, y=length)) + geom_point() +
+    ggplot(data=sample_n(atl_sub, 1e4), aes(x=age, y=length)) + geom_point() +
     stat_function(fun = vb, 
                   args = list(linf = coef(nls_growth)["linf"],
                               k = coef(nls_growth)["k"],
-                              t0 = coef(nls_growth)["t0"]))
+                              t0 = coef(nls_growth)["t0"])) + 
+    stat_function(fun = vb,
+                  args = list(linf = vbMin$estimate[1],
+                              k = vbMin$estimate[2],
+                              t0 = vbMin$estimate[3]),
+                  color = "red") + 
+    stat_function(fun = vb,
+                  args = list(linf = 130, k = 0.15, t0 = 0),
+                  color = "blue")
 
 # trying the nls option for each year/month combo to obtain median values
 nls_to_opt <- function(data) {

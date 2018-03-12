@@ -6,7 +6,6 @@ output: html_document
 ---
 ```{r global_options, include=F}
 knitr::opts_chunk$set(fig.width=12, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE)
-knitr::opts_knit$set(root.dir = '~/gadget/models/atlantis/cod/codModel')
 ```
 
 
@@ -15,296 +14,309 @@ library(plyr)
 library(tidyverse)
 library(grid)
 library(Rgadget)
-
-fit <- gadget.fit(wgts="WGTS", main.file='WGTS/main.final',
-                  fleet.predict = data.frame(fleet = 'comm', ratio=1),
+fit <- gadget.fit(wgts="WGTS", main.file="WGTS/main.final",
+                  fleet.predict = data.frame(fleet = "comm", ratio=1),
                   mat.par=c(-6.510198, 1.108594),
                   printfile.printatstart = 0,
                   printfile.steps = "all",
                   rec.len.param = TRUE)
 
+# source("~/R/rgadget/trunk/gadgetFileIO.R")
+# source("~/R/rgadget/trunk/gadgetfunctions.R")
+# source("~/R/rgadget/trunk/gadgetClass.R")
+# source("~/R/rgadget/trunk/gadgetMethods.R")
+# source("~/R/rgadget/trunk/function.R")
+# 
+# gssForward <-
+#     gadget.forward(years=6,params.file="WGTS/params.final",
+#                    stochastic=FALSE,
+#                    num.trials=1,
+#                    effort=0.2)
+
 ## fit statistics
 resTable <- fit$resTable[tail(head(names(fit$resTable),-2),-1)]
 
-summary.plot <-
-    ggplot(filter(fit$likelihoodsummary, year != 'all'),
+summary_plot <-
+    ggplot(filter(fit$likelihoodsummary, year != "all"),
            aes(as.numeric(year), likelihood.value)) +
     geom_point() + facet_wrap(~component, scales="free_y") +theme_bw()+
-    xlab('Year') + ylab('Score')
+    xlab("Year") + ylab("Score")
 
 
 ## to calculate biomass index
-tmp <- mutate(fit$sidat, survey = ifelse(substr(name,1,3)=='aut','aut', 'igfs'))
+tmp <- mutate(fit$sidat, survey = ifelse(substr(name,1,3)=="aut","aut", "igfs"))
 tmp <- rbind.fill(tmp,
                   ddply(tmp,~year+survey, summarise,
                         observed = sum(observed*0.008249352*lower^3.026918 ),
                         predict = sum(predict*0.008249352*lower^3.026918 ),
                         upper = sum(upper*0.008249352*lower^3.026918 ),
                         lower = sum(lower*0.008249352*lower^3.026918 ),
-                        length = 'Biomass'))
+                        length = "Biomass"))
 
 # plot the model survey data over the actual survey data
-si.spr <-
-    ggplot(subset(tmp, survey=='igfs'), aes(year,observed)) +
+si_spr <-
+    ggplot(subset(tmp, survey=="igfs"), aes(year,observed)) +
     geom_point() +
     geom_line(aes(year,predict)) +
     geom_linerange(data=subset(tmp,year==max(year)),
-                   aes(year,ymax=observed,ymin=predict),col='green')+
+                   aes(year,ymax=observed,ymin=predict),col="green")+
     geom_text(data=mutate(subset(tmp,year==min(year)),y=Inf),
               aes(year,y,label=length), vjust = 2,hjust = -1)+
-    facet_wrap(~length,scale='free_y',ncol=2) + theme_bw() +
-    ylab('Index') + xlab('Year') +
-    theme (panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+    facet_wrap(~length,scale="free_y",ncol=2) + theme_bw() +
+    ylab("Index") + xlab("Year") +
+    theme (panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
-si.aut <-
-    ggplot(filter(tmp, survey=='aut'), aes(year,observed)) +
+si_aut <-
+    ggplot(filter(tmp, survey=="aut"), aes(year,observed)) +
     geom_point() +
     geom_line(aes(year,predict)) +
     geom_linerange(data=subset(tmp,year==max(year)),
-                   aes(year,ymax=observed,ymin=predict),col='green')+
+                   aes(year,ymax=observed,ymin=predict),col="green")+
     geom_text(data=mutate(subset(tmp,year==min(year)),y=Inf),
               aes(year,y,label=length), vjust = 2,hjust = -1)+
-    facet_wrap(~length,scale='free_y',ncol=2) + theme_bw() +
-    ylab('Index') + xlab('Year') +
-    theme (panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+    facet_wrap(~length,scale="free_y",ncol=2) + theme_bw() +
+    ylab("Index") + xlab("Year") +
+    theme (panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
 
 # plot the survey length-distribution data over the actual survey length-distribution data
-ldist.spr <-
-    ggplot(subset(fit$catchdist.fleets,name == 'ldist.spr') ,
+ldist_spr <-
+    ggplot(subset(fit$catchdist.fleets,name == "ldist_spr") ,
            aes(lower,predicted)) + geom_line() +
-    geom_line(aes(lower,observed), color='gray') +
+    geom_line(aes(lower,observed), color="gray") +
     facet_wrap(~year+step) + theme_bw() + 
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == 'ldist.spr' & lower==min(lower)),y=Inf),
+                                 name == "ldist_spr" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
-    ylab('Proportion') + xlab('Length (cm)') + ggtitle('Spring Lengths') +
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Spring Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank()) 
 
-ldist.aut <-
-    ggplot(subset(fit$catchdist.fleets,name == 'ldist.aut') ,
+ldist_aut <-
+    ggplot(subset(fit$catchdist.fleets,name == "ldist_aut") ,
            aes(lower,predicted)) + geom_line() +
-    geom_line(aes(lower,observed),col='gray') +
+    geom_line(aes(lower,observed),col="gray") +
     facet_wrap(~year+step) + theme_bw() + 
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == 'ldist.aut' & lower==min(lower)),y=Inf),
+                                 name == "ldist_aut" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
-    ylab('Proportion') + xlab('Length (cm)') + ggtitle('Autumn Lengths') +
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Autumn Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
 
 # plot the model catchdistribution data over actual catchdistribution data
-ldist.catch <-
-    ggplot(subset(fit$catchdist.fleets,name == 'ldist.comm'),
+ldist_catch <-
+    ggplot(subset(fit$catchdist.fleets,name == "ldist_comm"),
            aes(lower,predicted)) +
-    geom_line(aes(lower,observed),col='gray') +
+    geom_line(aes(lower,observed),col="gray") +
     facet_wrap(~year+step) + theme_bw() + geom_line() +
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == 'ldist.comm' & lower==min(lower)),y=Inf),
+                                 name == "ldist_comm" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
-    ylab('Proportion') + xlab('Length (cm)') + ggtitle('Catch Lengths') +
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Catch Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
-ldist.discards <-
-    ggplot(subset(fit$catchdist.fleets,name == 'ldist.discards'),
+ldist_discards <-
+    ggplot(subset(fit$catchdist.fleets,name == "ldist_discards"),
            aes(lower,predicted)) +
-    geom_line(aes(lower,observed),col='gray') +
+    geom_line(aes(lower,observed),col="gray") +
     facet_wrap(~year+step) + theme_bw() + geom_line() +
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == 'ldist.discards' & lower==min(lower)),y=Inf),
+                                 name == "ldist_discards" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
-    ylab('Proportion') + xlab('Length (cm)') + ggtitle('Discard Lengths') +
+    ylab("Proportion") + xlab("Length (cm)") + ggtitle("Discard Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
 ages <- 
     fit$catchdist.fleets %>%
-    filter(name %in% c('aldist.spr', 'aldist.aut', 'aldist.comm')) %>%
+    filter(name %in% c("aldist_spr", "aldist_aut", "aldist_comm")) %>%
     group_by(name, year, step, age) %>%
     summarize(observed = sum(observed, na.rm=T),
               predicted = sum(predicted, na.rm=T)) %>%
-    mutate(age = as.numeric(gsub('age', '', age)))
+    mutate(age = as.numeric(gsub("age", "", age)))
 
-aldist.spr <-
-    ggplot(data=filter(ages, name=='aldist.spr'), aes(x=age, y=predicted)) + 
-    geom_line() + geom_line(aes(x=age, y=observed), color='lightgray') +
+aldist_spr <-
+    ggplot(data=filter(ages, name=="aldist_spr"), aes(x=age, y=predicted)) + 
+    geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
     facet_wrap(~year+step) + theme_bw() + 
-    geom_text(data=filter(ages, name == 'aldist.spr' & age == max(age)),
+    geom_text(data=filter(ages, name == "aldist_spr" & age == max(age)),
               aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
-    ylab('Proportion') + xlab('Age') + ggtitle('Spring Ages') +
+    ylab("Proportion") + xlab("Age") + ggtitle("Spring Ages") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank()) 
 
-aldist.aut <-
-    ggplot(data=filter(ages, name=='aldist.aut'), aes(x=age, y=predicted)) + 
-    geom_line() + geom_line(aes(x=age, y=observed), color='lightgray') +
+aldist_aut <-
+    ggplot(data=filter(ages, name=="aldist_aut"), aes(x=age, y=predicted)) + 
+    geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
     facet_wrap(~year+step) + theme_bw() + 
-    geom_text(data=filter(ages, name == 'aldist.aut' & age == max(age)),
+    geom_text(data=filter(ages, name == "aldist_aut" & age == max(age)),
               aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
-    ylab('Proportion') + xlab('Age') + ggtitle('Autumn Ages') +
+    ylab("Proportion") + xlab("Age") + ggtitle("Autumn Ages") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
-aldist.catch <-
-    ggplot(data=filter(ages, name=='aldist.comm'), aes(x=age, y=predicted)) + 
-    geom_line() + geom_line(aes(x=age, y=observed), color='lightgray') +
+aldist_catch <-
+    ggplot(data=filter(ages, name=="aldist_comm"), aes(x=age, y=predicted)) + 
+    geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
     facet_wrap(~year+step) + theme_bw() + 
-    geom_text(data=filter(ages, name == 'aldist.comm' & age == max(age)),
+    geom_text(data=filter(ages, name == "aldist_comm" & age == max(age)),
               aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
-    ylab('Proportion') + xlab('Age') + ggtitle('Catch Ages') +
+    ylab("Proportion") + xlab("Age") + ggtitle("Catch Ages") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank()) 
 
 
 
 # plot suitability against length for both survey and commercial fleets
-selection.plot <-
-    ggplot(fit$suitability,
-           aes(length,suit,lty=fleet)) +
-    geom_line() +
-    theme_bw() + ylab('Suitability') + xlab('Length') +
-    theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) 
-
-
-# plot growth curve from model
-selection.plot <-
+selection_plot <-
     ggplot(filter(fit$suitability, suit > 0),
            aes(length,suit,lty=fleet, color = stock)) +
     geom_line() +
-    theme_bw() + ylab('Suitability') + xlab('Length') +
+    theme_bw() + ylab("Suitability") + xlab("Length") +
     theme(legend.position = c(0.8,0.25), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) 
+          plot.margin = unit(c(0,0,0,0),"cm"))
+
+
+# plot growth curve from model
+gr_plot <-
+    ggplot(fit$stock.growth,
+           aes(age,length)) + 
+    geom_line() +
+    theme_bw() + ylab("Length") + xlab("Age") +
+    theme(legend.position = c(0.9,0.75), legend.title = element_blank(),
+          plot.margin = unit(c(0,0,0,0),"cm"))
 
 
 # plot recruitment of stock by year
-rec.plot <-
+rec_plot <-
     ggplot(fit$res.by.year,aes(year,recruitment/1e6)) +
-    geom_bar(stat='identity') +
-    ylab("Recruitment (in millions)") + xlab('Year') +  theme_bw() +
+    geom_bar(stat="identity") +
+    ylab("Recruitment (in millions)") + xlab("Year") +  theme_bw() +
     theme(legend.position = c(0.25,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) 
+          plot.margin = unit(c(0,0,0,0),"cm")) 
 
 # plotting the catch by year
-catch.plot <- 
+catch_plot <- 
     ggplot(fit$res.by.year,aes(year,catch/1000)) +
-    geom_bar(stat='identity') +
-    ylab("Catches (in tons)") + xlab('Year') +  theme_bw() +
+    geom_bar(stat="identity") +
+    ylab("Catches (in tons)") + xlab("Year") +  theme_bw() +
     theme(legend.position = c(0.25,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm'))
+          plot.margin = unit(c(0,0,0,0),"cm"))
 
 
 # plotting the biomass by year
-biomass.plot <- 
+biomass_plot <- 
     ggplot(fit$res.by.year,aes(year,total.biomass/1000)) +
-    geom_bar(stat='identity') +
-    ylab("Total biomass (in tons)") + xlab('Year') +  theme_bw() +
+    geom_bar(stat="identity") +
+    ylab("Total biomass (in tons)") + xlab("Year") +  theme_bw() +
     theme(legend.position = c(0.25,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) #+
+          plot.margin = unit(c(0,0,0,0),"cm")) #+
 #facet_wrap(~stock, scales="free_y")
 
 
 # plotting the harvest per year
-harv.plot <- 
+harv_plot <- 
     ggplot(fit$res.by.year,aes(year,harv.biomass/1000)) +
-    geom_bar(stat='identity') +
-    ylab("Harvestable biomass (in tons)") + xlab('Year') +  theme_bw() +
+    geom_bar(stat="identity") +
+    ylab("Harvestable biomass (in tons)") + xlab("Year") +  theme_bw() +
     theme(legend.position = c(0.25,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm')) #+
+          plot.margin = unit(c(0,0,0,0),"cm")) #+
 #facet_wrap(~stock, scales="free_y")
 
 
 # plot sustainable stock biomass per year
-ssb.plot <- 
+ssb_plot <- 
     ggplot(fit$res.by.year,aes(year,ssb/1000)) +
-    geom_bar(stat='identity') +
-    ylab("SSB (in tons)") + xlab('Year') +  theme_bw() +
+    geom_bar(stat="identity") +
+    ylab("SSB (in tons)") + xlab("Year") +  theme_bw() +
     theme(legend.position = c(0.25,0.75), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm'))
+          plot.margin = unit(c(0,0,0,0),"cm"))
 
-f.plot <- 
+f_plot <- 
     ggplot(filter(fit$res.by.year, stock == "cod"), aes(year, F)) + 
     geom_line() + 
     ylab("F") + xlab("Year") +  theme_bw() +
     theme(legend.position=c(0.2, 0.8), legend.title = element_blank(),
-          plot.margin = unit(c(0,0,0,0),'cm'))
+          plot.margin = unit(c(0,0,0,0),"cm"))
 
-f.by.age <- 
+f_by_age <- 
     fit$stock.prey %>%
     filter(stock == "cod") %>%
     group_by(stock, year, age) %>%
     summarize(f = mean(mortality))
 
-f.by.age.plot <- 
+f_by_age_plot <- 
     ggplot(f.by.age, aes(x=year, y=f)) + 
     geom_line() + facet_wrap(~age) +
     xlab("Year") + ylab("F") + theme_bw()
 
 ## basic plots to check parameters, initial values, and
 ## natural mortality (if estimated)
-init.vals <- 
+init_vals <- 
     ggplot(filter(fit$stock.std, year == min(year)), 
            aes(x=age, y=number/1e6)) +
-    geom_bar(stat='identity') +
-    xlab('Age') + ylab('Numbers (millions)') + theme_bw()
+    geom_bar(stat="identity") +
+    xlab("Age") + ylab("Numbers (millions)") + theme_bw()
 
-params.plot <- 
-    ggplot(data=fit$params[-grep('rec.[0-9]', fit$params$switch), ],
+params_plot <- 
+    ggplot(data=fit$params[-grep("rec.[0-9]", fit$params$switch), ],
            aes(x=switch, y=value)) + geom_point() +
     geom_errorbar(aes(ymin=lower, ymax=upper), width = 0.1) + 
-    facet_wrap(~switch, scales='free') + theme_bw() +
+    facet_wrap(~switch, scales="free") + theme_bw() +
     theme (axis.ticks.y = element_blank(),
-           panel.spacing = unit(0,'cm'), plot.margin = unit(c(0,0,0,0),'cm'),
+           panel.spacing = unit(0,"cm"), plot.margin = unit(c(0,0,0,0),"cm"),
            strip.background = element_blank(), strip.text.x = element_blank())
 
 
 ## plots if formulas are used for estimation
 
 # plot for natural mortality if m.estimate.formula is used
-nat.m.plot <- 
+nat_m_plot <- 
     ggplot(data=data.frame(age=unique(fit$stock.std$age)),
                            aes(x=age)) + 
     stat_function(fun=function(x, nat.m, max.m, min.m) {
                 exp((-1)*nat.m*x)*(max.m-min.m) + min.m
-                }, args=list(nat.m=fit$params$value[grep('m.decay', 
+                }, args=list(nat.m=fit$params$value[grep("m.decay", 
                                                         fit$params$switch)],
-                            max.m=fit$params$value[grep('max.m', 
+                            max.m=fit$params$value[grep("max.m", 
                                                         fit$params$switch)],
-                            min.m=fit$params$value[grep('min.m',
+                            min.m=fit$params$value[grep("min.m",
                                                          fit$params$switch)]))
 
 # plot for initial values if estimated as a function of age
-init.plot <- 
+init_plot <- 
     ggplot(data=data.frame(age=unique(fit$stock.std$age)),
            aes(x=age)) + 
     stat_function(fun=function(x, init.m, init.scalar) {
                 exp((-1)*init.m*x)*init.scalar
-            }, args=list(init.m=fit$params$value[grep('init.m', 
+            }, args=list(init.m=fit$params$value[grep("init.m", 
                                                      fit$params$switch)],
-                         init.scalar=fit$params$value[grep('init.scalar', 
+                         init.scalar=fit$params$value[grep("init.scalar", 
                                                      fit$params$switch)]))
+
 ```
 
 ``` {r, atlantis results, include = FALSE}
+#  library(tidyverse)
 library(mfdb)
 library(mfdbatlantis)
 
-# setwd('~/gadget/models/atlantis')
-gadget_st_year <- 1983
+# setwd("~/gadget/models/atlantis")
+gadget_st_year <- 1970
 
-is_dir <- atlantis_directory('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF')
+is_dir <- atlantis_directory("~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF")
 
 is_run_options <- atlantis_run_options(is_dir)
 
@@ -315,152 +327,160 @@ is_temp <- atlantis_temperature(is_dir, is_area_data)
 # Read in all functional groups, assign MFDB shortcodes where possible
 is_functional_groups <- atlantis_functional_groups(is_dir)
 is_functional_groups$MfdbCode <- vapply(
-    mfdb_find_species(is_functional_groups$LongName)['name',],
-    function (x) if (length(x) > 0) x[[1]] else as.character(NA), "")
+mfdb_find_species(is_functional_groups$LongName)["name",],
+function (x) if (length(x) > 0) x[[1]] else as.character(NA), "")
 
 # assemble and import cod 
-fgName <- 'Cod'
+fgName <- "Cod"
 fg_group <- is_functional_groups[c(is_functional_groups$Name == fgName),]
 is_fg_count <- atlantis_fg_tracer(is_dir, is_area_data, fg_group)
 
 
 # compare biomass by year in gadget to atlantis
-atl.biomass <- 
-    read.table('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF/OutBiomIndx.txt', 
-                          header=T) %>%
-    mutate(year = 1948:2013) %>%
-    select(year, starts_with(fg_group$GroupCode)) %>%
-    mutate(atl.biomass = FCD*1000)
-    
+atl_biomass <- 
+read.table("~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF/OutBiomIndx.txt", 
+                      header=T) %>%
+mutate(year = 1948:2013) %>%
+select(year, starts_with(fg_group$GroupCode)) %>%
+mutate(atl_biomass = FCD*1000)
+
+
+#-----------------------------------------------------------------------
+# comparison plots
+theme_breaks <- c("gadget", "atlantis")
+theme_values <- c("gadget" = "black",
+              "atlantis" = "red")
+theme_labels <- c("gadget" = "Gadget",
+              "atlantis" = "Atlantis")
 
 # plot gadget biomass against atlantis
-gad.biomass <- 
-    fit$stock.std %>%
-    filter(step == 1) %>%
-    mutate(total.biomass = mean.weight * number) %>%
-    group_by(year) %>%
-    summarize(total.biomass = sum(total.biomass))
+gad_biomass <- 
+fit$stock.std %>%
+filter(step == 1) %>%
+mutate(total_biomass = mean.weight * number) %>%
+group_by(year) %>%
+summarize(total_biomass = sum(total_biomass))
 
-atl.gad.biomass <- 
-    left_join(gad.biomass, atl.biomass) %>%
-    mutate(scale.diff = total.biomass / atl.biomass)
+atl_gad_biomass <- 
+left_join(gad_biomass, atl_biomass) %>%
+mutate(scale_diff = total_biomass / atl_biomass)
 
-atl.gad.plot <- 
-    ggplot(data=atl.gad.biomass, aes(x=atl.biomass, y=total.biomass)) + geom_point() +
-    geom_abline(intercept=0, slope=1) + theme_bw() + 
-    xlab('Atlantis Annual Biomass') + ylab('Gadget Annual Biomass')
+atl_gad_plot <- 
+ggplot(data=atl_gad_biomass, aes(x=atl_biomass, y=total_biomass)) + geom_point() +
+geom_abline(intercept=0, slope=1) + theme_bw() + 
+xlab("Atlantis Annual Biomass") + ylab("Gadget Annual Biomass")
 
-biomass.comp.plot <-
-    ggplot(data=atl.gad.biomass, aes(x=year)) + 
-    geom_line(aes(y=total.biomass/1e6, color='Gadget')) +
-    geom_line(aes(y=atl.biomass/1e6, color='Atlantis')) + 
-    scale_color_manual('', breaks=c('Gadget', 'Atlantis'), values=c('red', 'black')) +
-    theme_bw() + xlab('Year') + ylab('Biomass (thousand tons)') + 
-    theme(axis.text = element_text(size = 15),
-          axis.title = element_text(size = 17),
-          legend.text = element_text(size = 15))
+biomass_comp_plot <-
+ggplot(data=atl_gad_biomass, aes(x=year)) + 
+geom_line(aes(y=total_biomass/1e6, color="gadget")) +
+geom_line(aes(y=atl_biomass/1e6, color="atlantis")) + 
+scale_color_manual(name = "",
+                   breaks = theme_breaks,
+                   values = theme_values, 
+                   labels = theme_labels) +
+theme_bw() + xlab("Year") + ylab("Biomass (thousand tons)") + 
+theme(axis.text = element_text(size = 15),
+      axis.title = element_text(size = 17),
+      legend.text = element_text(size = 15))
 
-bm.scale.diff.plot <- 
-    ggplot(data=atl.gad.biomass, aes(x=year, y=scale.diff)) + 
-    geom_line() + geom_hline(yintercept = 1, linetype='dashed') + 
-    ylim(0,pmax(1.5, max(atl.gad.biomass$scale.diff, na.rm=T))) +
-    theme_bw() + xlab('Year') + ylab('Relative difference in biomass') + 
-    theme(axis.text = element_text(size = 15),
-          axis.title = element_text(size = 17),
-          legend.text = element_text(size = 15))
-
+bm_scale_diff_plot <- 
+ggplot(data=atl_gad_biomass, aes(x=year, y=scale_diff)) + 
+geom_line() + geom_hline(yintercept = 1, linetype="dashed") + 
+ylim(0,pmax(1.5, max(atl_gad_biomass$scale_diff, na.rm=T))) +
+theme_bw() + xlab("Year") + ylab("Relative difference in biomass") + 
+theme(axis.text = element_text(size = 15),
+      axis.title = element_text(size = 17),
+      legend.text = element_text(size = 15))
 
 #########################
 # SSB
 #########################
-atl.ssb <- 
-    is_fg_count %>%
-    filter(count >= 1, age >= 4, month == 3) %>%
-    group_by(year, age) %>%
-    summarize(atl.ssb = sum((weight / 1e3) * count))
+atl_ssb <- 
+is_fg_count %>%
+filter(count >= 1, age >= 4, month == 3) %>%
+group_by(year, age) %>%
+summarize(atl_ssb = sum((weight / 1e3) * count))
 
-gad.ssb <- 
-    fit$stock.std %>%
-    filter(age >= 4, step == 1) %>%
-    mutate(age = age - (age %% 2)) %>%
-    group_by(year, age) %>%
-    summarize(gad.ssb = sum(number * mean.weight))
+gad_ssb <- 
+fit$stock.std %>%
+filter(age >= 4, step == 1) %>%
+mutate(age = age - (age %% 2)) %>%
+group_by(year, age) %>%
+summarize(gad_ssb = sum(number * mean.weight))
 
-atl.gad.ssb <- 
-    left_join(gad.ssb, atl.ssb)
+atl_gad_ssb <- 
+left_join(gad_ssb, atl_ssb)
 
 # total ssb
 ssb <- 
-    atl.gad.ssb %>%
-    group_by(year) %>%
-    summarize(gad.ssb = sum(gad.ssb),
-              atl.ssb = sum(atl.ssb))
+atl_gad_ssb %>%
+group_by(year) %>%
+summarize(gad_ssb = sum(gad_ssb),
+          atl_ssb = sum(atl_ssb))
 
-ssb.plot <- 
-    ggplot(data=ssb, aes(x=year)) + 
-    geom_line(aes(y=gad.ssb/1e6, color = "gadget")) + 
-    geom_line(aes(y=atl.ssb/1e6, color = "atlantis")) +
-    xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() +
-    scale_color_manual("",
-                       breaks = c("gadget", "atlantis"),
-                       values = c("gadget" = "black",
-                                  "atlantis" = "red"),
-                       labels = c("gadget" = "Gadget",
-                                  "atlantis" = "Atlantis")) + 
-    theme(axis.text = element_text(size = 15),
-          axis.title = element_text(size = 17),
-          legend.text = element_text(size = 15))
+ssb_plot <- 
+ggplot(data=ssb, aes(x=year)) + 
+geom_line(aes(y=gad_ssb/1e6, color = "gadget")) + 
+geom_line(aes(y=atl_ssb/1e6, color = "atlantis")) +
+xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() +
+scale_color_manual(name = "",
+                   breaks = theme_breaks,
+                   values = theme_values, 
+                   labels = theme_labels) + 
+theme(axis.text = element_text(size = 15),
+      axis.title = element_text(size = 17),
+      legend.text = element_text(size = 15))
 
 
 # ssb by age
-ssb.age.plot <- 
-    ggplot(data=atl.gad.ssb, aes(x=year)) + 
-    geom_line(aes(y=gad.ssb / 1e6, color = "gadget")) + 
-    geom_line(aes(y=atl.ssb / 1e6, color = "atlantis")) + facet_wrap(~age, scales = "free_y") +
-    xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() + 
-    scale_color_manual("",
-                       breaks = c("gadget", "atlantis"),
-                       values = c("gadget" = "black",
-                                  "atlantis" = "red"),
-                       labels = c("gadget" = "Gadget",
-                                  "atlantis" = "Atlantis")) + 
-    theme(axis.text = element_text(size = 15),
-          axis.title = element_text(size = 17),
-          legend.text = element_text(size = 15))
-
+ssb_age_plot <- 
+ggplot(data=atl_gad_ssb, aes(x=year)) + 
+geom_line(aes(y=gad_ssb / 1e6, color = "gadget")) + 
+geom_line(aes(y=atl_ssb / 1e6, color = "atlantis")) + facet_wrap(~age, scales = "free_y") +
+xlab("Year") + ylab("SSB (thousand tons)") + theme_bw() + 
+scale_color_manual(name = "",
+                   breaks = theme_breaks,
+                   values = theme_values, 
+                   labels = theme_labels) +
+theme(axis.text = element_text(size = 15),
+      axis.title = element_text(size = 17),
+      legend.text = element_text(size = 15))
 
 #######################################
 ## to check numbers instead of biomass
 #######################################
-cod.numbers <- 
+cod_numbers <- 
     is_fg_count %>% 
-    filter(month == 9) %>%
+    filter(month == 3) %>%
     group_by(year) %>% 
-    summarize(atl.number = sum(count))
-gad.numbers <- 
+    summarize(atl_number = sum(count))
+gad_numbers <- 
     fit$stock.std %>%
-    filter(step == 3) %>%
+    filter(step == 1) %>%
     group_by(year) %>%
-    summarize(total.number = sum(number))
-atl.gad.numbers <- 
-    left_join(gad.numbers, cod.numbers) %>%
-    mutate(scale.diff = total.number / atl.number)
+    summarize(gad_number = sum(number))
+atl_gad_numbers <- 
+    left_join(gad_numbers, cod_numbers) %>%
+    mutate(scale_diff = gad_number / atl_number)
 
-numbers.comp.plot <- 
-    ggplot(data=filter(atl.gad.numbers, year < 2013), aes(x=year)) + 
-    geom_line(aes(y=total.number/1e6, color='Gadget')) +
-    geom_line(aes(y=atl.number/1e6, color='Atlantis')) +
-    scale_color_manual('', breaks=c('Gadget', 'Atlantis'), values=c('red', 'black')) +
-    theme_bw() + xlab('Year') + ylab('Numbers (millions of fish)') + 
+numbers_comp_plot <- 
+    ggplot(data=filter(atl_gad_numbers, year < 2011), aes(x=year)) + 
+    geom_line(aes(y=gad_number/1e6, color="gadget")) +
+    geom_line(aes(y=atl_number/1e6, color="atlantis")) +
+    scale_color_manual(name = "",
+                       breaks = theme_breaks,
+                       values = theme_values, 
+                       labels = theme_labels) +
+    theme_bw() + xlab("Year") + ylab("Numbers (millions of fish)") + 
     theme(axis.text = element_text(size = 15),
           axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
 
-nmb.scale.diff.plot <- 
-    ggplot(data=atl.gad.numbers, aes(x=year, y=scale.diff)) + geom_line() +
-    geom_hline(yintercept = 1, linetype='dashed') +
-    ylim(0,pmax(1.5, max(atl.gad.numbers$scale.diff, na.rm=T))) +
-    theme_bw() + xlab('Year') + ylab('Relative difference in numbers') + 
+nmb_scale_diff_plot <- 
+    ggplot(data=atl_gad_numbers, aes(x=year, y=scale_diff)) + geom_line() +
+    geom_hline(yintercept = 1, linetype="dashed") +
+    ylim(0,pmax(1.5, max(atl_gad_numbers$scale_diff, na.rm=T))) +
+    theme_bw() + xlab("Year") + ylab("Relative difference in numbers") + 
     theme(axis.text = element_text(size = 15),
           axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
@@ -469,127 +489,136 @@ nmb.scale.diff.plot <-
 #######################################
 ## check landings
 #######################################
-atl.landings <- 
-    read.table('~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF/OutCatch.txt', 
-               header=T) %>%
-    mutate(year = 1948:2012) %>%
-    select(year, starts_with(fg_group$GroupCode))
+atl_landings <- 
+read.table("~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF/OutCatch.txt", 
+           header=T) %>%
+mutate(year = 1948:2012) %>%
+select(year, starts_with(fg_group$GroupCode))
 
-atl.catch.plot <- catch.plot + geom_line(data=atl.landings, aes(x=year, y=FCD))
+atl_catch_plot <- catch_plot + geom_line(data=atl_landings, aes(x=year, y=FCD))
 
 
 #######################################
 ## check numbers by age
 #######################################
-gad.age.numbers <- 
+gad_age_numbers <- 
     fit$stock.std %>%
-    filter(step == 2) %>%
+    filter(step == 1) %>%
     mutate(age = age - (age %% 2)) %>%
     group_by(year, age) %>%
-    summarize(gad.number = sum(number))
+    summarize(gad_number = sum(number))
 
-atl.age.numbers <- 
+atl_age_numbers <- 
     is_fg_count %>%
     filter(month == 3, count >= 1) %>%
+    mutate(age = ifelse(age >= 12, 12, age)) %>%
     group_by(year, age) %>%
-    summarize(atl.number = sum(count))
+    summarize(atl_number = sum(count))
 
-atl.gad.age.numbers <- left_join(gad.age.numbers, atl.age.numbers)
+atl_gad_age_numbers <- left_join(gad_age_numbers, atl_age_numbers)
 
-age.numbers.plot <-
-    ggplot(data=filter(atl.gad.age.numbers), 
-           aes(x=year, y=gad.number/1e6, color='Gadget')) + geom_line() + 
-    geom_line(aes(x=year, y=atl.number/1e6, color='Atlantis')) + 
-    facet_wrap(~age, scales='free_y') + 
-    scale_color_manual('', breaks=c('Gadget', 'Atlantis'), 
-                       values=c('red', 'black')) +
-    theme_bw() + xlab('Year') + ylab('Numbers (millions of fish)') + 
+age_numbers_plot <-
+    ggplot(data=filter(atl_gad_age_numbers, year < 2011), 
+           aes(x=year, y=gad_number/1e6, color="gadget")) + geom_line() + 
+    geom_line(aes(x=year, y=atl_number/1e6, color="atlantis")) + 
+    facet_wrap(~age, scales="free_y") + 
+    scale_color_manual(name = "",
+                       breaks = theme_breaks,
+                       values = theme_values, 
+                       labels = theme_labels) +
+    theme_bw() + xlab("Year") + ylab("Numbers (millions of fish)") + 
     theme(axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
 
 # ----------------------------------------------------------
 # age numbers by parsed out by step
 # Note: this only works when all timesteps are printed by gadget
-gad.step.age.numbers <- 
+gad_step_age_numbers <- 
     fit$stock.std %>%
     mutate(age = age - (age %% 2)) %>%
     group_by(year, age, step) %>%
-    summarize(gad.number = sum(number))
+    summarize(gad_number = sum(number))
 
 monthToStep <- sort(rep(1:4,3))
-atl.step.age.numbers <- 
+atl_step_age_numbers <- 
     is_fg_count %>%
     filter(count >= 1) %>%
     mutate(step = monthToStep[month]) %>%
     filter(month %in% c(1,4,7,10)) %>%
     group_by(year, age, step) %>%
-    summarize(atl.number = sum(count))
+    summarize(atl_number = sum(count))
 
-atl.gad.step.age.numbers <- 
-    left_join(gad.step.age.numbers, atl.step.age.numbers)
+atl_gad_step_age_numbers <- 
+    left_join(gad_step_age_numbers, atl_step_age_numbers)
 
-step.age.numbers.plot <-
-    ggplot(data=atl.gad.step.age.numbers, 
-           aes(x=year, y=gad.number/1e6, color ='Gadget', 
+step_age_numbers_plot <-
+    ggplot(data=atl_gad_step_age_numbers, 
+           aes(x=year, y=gad_number/1e6, color ="gadget", 
                linetype=factor(step))) + 
     geom_line() + 
-    geom_line(data=atl.gad.step.age.numbers,
-              aes(x=year, y=atl.number/1e6, color='Atlantis', 
+    geom_line(data=atl_gad_step_age_numbers,
+              aes(x=year, y=atl_number/1e6, color="atlantis", 
                   linetype=factor(step))) + 
-    facet_wrap(~age, scales='free_y') + 
-    scale_color_manual('', breaks=c('Gadget', 'Atlantis'), 
-                       values=c('red', 'black')) +
-    theme_bw() + xlab('Year') + ylab('Numbers (millions of fish)') + 
+    facet_wrap(~age, scales="free_y") + 
+    scale_color_manual(name = "",
+                       breaks = theme_breaks,
+                       values = theme_values, 
+                       labels = theme_labels) +
+    scale_linetype_discrete(name = "Gadget Timestep") + 
+    theme_bw() + xlab("Year") + ylab("Numbers (millions of fish)") + 
     theme(axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
 
 
 #-----------------------------------------------------------
 # visualize the contribution of each age group to biomass
-gad.age.biomass <- 
+gad_age_biomass <- 
     fit$stock.std %>%
-    filter(step == 3) %>%
+    filter(step == 1) %>%
     mutate(age = age - (age %% 2),
            biomass = mean.weight * number) %>%
     group_by(year, age) %>%
-    summarize(total.biomass = sum(biomass))
+    summarize(total_biomass = sum(biomass))
 
-atl.age.biomass <- 
+atl_age_biomass <- 
     is_fg_count %>%
-    filter(month == 9, count >= 1) %>%
+    filter(month == 4, count >= 1) %>%
     mutate(biomass = (count * weight)/1e3) %>%
     group_by(year, age) %>%
-    summarize(atl.biomass = sum(biomass))
+    summarize(atl_biomass = sum(biomass))
 
-atl.gad.age.biomass <- 
-    left_join(gad.age.biomass, atl.age.biomass) %>%
-    mutate(diff = total.biomass - atl.biomass,
-           scale.diff = total.biomass / atl.biomass)
+atl_gad_age_biomass <- 
+    left_join(gad_age_biomass, atl_age_biomass) %>%
+    mutate(diff = total_biomass - atl_biomass,
+           scale_diff = total_biomass / atl_biomass)
 
-age.biomass.comp.plot <-
-    ggplot(data=atl.gad.age.biomass, aes(x=year)) + 
-    geom_line(aes(y=total.biomass/1e3, color='Gadget')) +
-    geom_line(aes(y=atl.biomass/1e3, color='Atlantis')) + 
+age_biomass_comp_plot <-
+    ggplot(data=atl_gad_age_biomass, aes(x=year)) + 
+    geom_line(aes(y=total_biomass/1e3, color="gadget")) +
+    geom_line(aes(y=atl_biomass/1e3, color="atlantis")) + 
     facet_wrap(~age, scales = "free_y") +
-    scale_color_manual('', breaks=c('Gadget', 'Atlantis'), values=c('red', 'black')) +
-    theme_bw() + xlab('Year') + ylab('Biomass (tons)') + 
+    scale_color_manual(name = "",
+                       breaks = theme_breaks,
+                       values = theme_values, 
+                       labels = theme_labels) +
+    theme_bw() + xlab("Year") + ylab("Biomass (tons)") + 
     theme(axis.text = element_text(size = 10),
           axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
 
-diff.by.age <- 
-    atl.gad.age.biomass %>%
+diff_by_age <- 
+    atl_gad_age_biomass %>%
     filter(year >= gadget_st_year) %>%
     group_by(age) %>%
-    summarize(mn.diff = mean(diff/1e3),
-              se.diff = sd(diff/1e3) / sqrt(n()))
+    summarize(mn_diff = mean(diff/1e3),
+              se_diff = sd(diff/1e3) / sqrt(n()))
 
-diff.by.age.plot <- 
-    ggplot(data=diff.by.age, aes(x=age, y=mn.diff)) + geom_point(size = 4) +
-    geom_errorbar(aes(ymin = mn.diff - se.diff, 
-                      ymax = mn.diff + se.diff), width = 0) + 
+diff_by_age_plot <- 
+    ggplot(data=diff_by_age, aes(x=age, y=mn_diff)) + geom_point(size = 4) +
+    geom_errorbar(aes(ymin = mn_diff - se_diff, 
+                      ymax = mn_diff + se_diff), width = 0) + 
     geom_hline(yintercept = 0, linetype = "dashed") + 
-    theme_bw() + xlab('Age') + ylab('Difference in Biomass (tons)') + 
+    theme_bw() + xlab("Age") + ylab("Difference in Biomass (tons)") + 
     theme(axis.text = element_text(size = 15),
           axis.title = element_text(size = 17),
           legend.text = element_text(size = 15))
@@ -598,13 +627,13 @@ diff.by.age.plot <-
 #######################################
 ## check growth
 #######################################
-cod.growth <- 
+cod_growth <- 
     is_fg_count %>%
     filter(count > 0) %>%
     sample_n(10000)
 
-gr.check <- 
-    ggplot(data=cod.growth, aes(x=age, y=length)) + 
+gr_check <- 
+    ggplot(data=cod_growth, aes(x=age, y=length)) + 
     geom_point(size = 3, shape=1) +
     geom_line(data=fit$stock.growth, aes(x=age, y=length)) +
     theme_bw() + xlab("Age") + ylab("Length (cm)") + 
@@ -617,26 +646,26 @@ gr.check <-
 # compare gadget initial values to 
 # atlantis initial values
 #######################################
-gad.init.year <- min(fit$stock.std$year)
-atl.init <- 
+gad_init_year <- min(fit$stock.std$year)
+atl_init <- 
     is_fg_count %>%
-    filter(year == gad.init.year,
+    filter(year == gad_init_year,
            month == 3,
            count >= 1) %>%
     group_by(age) %>%
-    summarize(atl.init = sum(count))
+    summarize(atl_init = sum(count))
 
-gad.init <- 
+gad_init <- 
     fit$stock.std %>%
     filter(year == min(year)) %>%
     mutate(age = age - (age %% 2)) %>%
     group_by(age) %>% 
-    summarize(gad.init = sum(number))
+    summarize(gad_init = sum(number))
 
-gad.atl.init.plot <- 
-    ggplot(data=gad.init, aes(x=age, y=gad.init)) + 
-    geom_bar(stat='identity') + 
-    geom_line(data=atl.init, aes(x=age, y=atl.init))
+gad_atl_init_plot <- 
+    ggplot(data=gad_init, aes(x=age, y=gad_init)) + 
+    geom_bar(stat="identity") + 
+    geom_line(data=atl_init, aes(x=age, y=atl_init))
 ```
 
 
@@ -650,100 +679,108 @@ gad.atl.init.plot <-
 
 <!-- Add specific results/figures you want presented here-->
 
+## Standardized Final Likelihood Values
+``` {r}
+knitr::kable(fit$nesTable, digits = 3)
+summary_plot
+```
+
+
+
 ## Survey Indices
 
 ### Spring
 ``` {r}
-si.spr
+si_spr
 ```
 
 ### Autumn
 ``` {r}
-si.aut
+si_aut
 ```
 
 ## Ages and Lengths
 
 ``` {r}
-ldist.spr
+ldist_spr
 ```
 
 ``` {r}
-ldist.aut
+ldist_aut
 ```
 
 ``` {r}
-ldist.catch
+ldist_catch
 ```
 
 ``` {r}
-aldist.spr
+aldist_spr
 ```
 
 ``` {r}
-aldist.aut
+aldist_aut
 ```
 
 ``` {r}
-aldist.catch
+aldist_catch
+```
+
+### Growth
+``` {r}
+gr_plot
 ```
 
 ### Selection
 ``` {r}
-selection.plot
+selection_plot
 ```
 
 
 ### F
 ``` {r}
-f.plot
+f_plot
 ```
 
 ### F by age plot
 ``` {r}
-f.by.age.plot
-```
-
-### Selection
-``` {r}
-selection.plot
+f_by_age_plot
 ```
 
 # Gadget-Atlantis Comparisons
 
+### Numbers
+``` {r}
+numbers_comp_plot
+```
+
+### Numbers by age
+``` {r}
+age_numbers_plot
+```
+
 ### Total Biomass
 ``` {r}
-biomass.comp.plot
+biomass_comp_plot
 ```
 
 ### Total Biomass by age
 ``` {r}
-age.biomass.comp.plot
+age_biomass_comp_plot
 ```
 
 
 ### SSB (age 4+)
 ``` {r}
-ssb.plot
+ssb_plot
 ```
 
 ### SSB by age
 ``` {r}
-ssb.age.plot
-```
-
-### Numbers
-``` {r}
-numbers.comp.plot
-```
-
-### Numbers by age
-``` {r}
-age.numbers.plot
+ssb_age_plot
 ```
 
 
 ### Growth
 ``` {r}
-gr.check
+gr_check
 ```

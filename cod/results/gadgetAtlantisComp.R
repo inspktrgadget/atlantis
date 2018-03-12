@@ -263,7 +263,7 @@ step_age_numbers_plot <-
 # visualize the contribution of each age group to biomass
 gad_age_biomass <- 
     fit$stock.std %>%
-    filter(step == 3) %>%
+    filter(step == 1) %>%
     mutate(age = age - (age %% 2),
            biomass = mean.weight * number) %>%
     group_by(year, age) %>%
@@ -271,7 +271,7 @@ gad_age_biomass <-
 
 atl_age_biomass <- 
     is_fg_count %>%
-    filter(month == 9, count >= 1) %>%
+    filter(month == 4, count >= 1) %>%
     mutate(biomass = (count * weight)/1e3) %>%
     group_by(year, age) %>%
     summarize(atl_biomass = sum(biomass))

@@ -17,7 +17,7 @@ stock <- "cod"
 stocknames <- c(stock0, stock)
 
 # connect to mfdb database
-mdb <- mfdb("atlantis_logisticsurvey")
+mdb <- mfdb("atlantis_logsurv_grpAges")
 
 # fetch defaults
 source(sprintf("%s/setupDefaults.R", setup_d))

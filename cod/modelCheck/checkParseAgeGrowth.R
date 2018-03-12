@@ -47,7 +47,7 @@ source("functions/parseAges.R")
 source("cod/modelCheck/getAtlantisMort3.R")
 # add mortality and parse ages based on m
 age_count <- 
-    left_join(is_fg_count, m.func.vals) %>%
+    left_join(is_fg_count, m_vals) %>%
     parseAges(.) %>%
     arrange(year, month, day, area, depth, age)
 
@@ -57,7 +57,7 @@ smooth_len <-
     filter(count >= 1) %>%
     left_join(vbMin) %>%
     mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
-                           vb(linf, k, t0, age))) %>%
+                           vb(linf, k+0.01, t0, age))) %>%
     select(depth, area, year, month, day, group, cohort, weight, length, 
            maturity_stage, age, count)
 
@@ -78,7 +78,7 @@ parsed_nls_params <- apply(parsed_nls_growth, 2, mean)
 
 # plot to compare
 plot(length ~ age, data=atl_sub, xlab = "Age", ylab = "Length (cm)")
-points(length ~ age, data=sample_n(smooth_len, 1e4), col = "red")
+points(length ~ age, data=sample_n(smooth_len, 1e4), col = rgb(1,0,0,0.01))
 curve(vb_optimizer(vb_min$estimate, x), add = TRUE)
 curve(vb_optimizer(parsed_nls_params, x), add = TRUE, col = "red")
 

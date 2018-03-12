@@ -7,18 +7,18 @@ library(fjolstTranslate)
 
 ## doing spring surveys first
 stations <- 
-    select(translate.stodvar(), sample.id, year, sampling.type) %>%
+    select(fjolst_translate(stodvar), sample.id, year, sampling.type) %>%
     filter(sampling.type %in% c(30, 35))
 
 ## import cod samples
 ldist <- 
-    translate.all.le() %>%
+    fjolst_translate(all.le) %>%
     filter(species.code == 1, sample.id %in% stations$sample.id) %>%
     left_join(stations)
 
 # get lengths at age by year
 aldist.by.year <- 
-    translate.all.kv() %>%
+    fjolst_translate(all.kv) %>%
     filter(species.code == 1, sample.id %in% stations$sample.id) %>%
     left_join(stations)
 
@@ -39,10 +39,18 @@ age.groups <- data.frame(age = 0:19,
 lengths.at.age <- mutate(lengths.at.age,
                           age.group = ifelse(age %% 2 == 0, age, age-1))
 
-cod.length.mn.sd <- 
+cod_mnlenvar_yearclass <- 
+    lengths.at.age %>%
+    group_by(age) %>%
+    summarize(mnlen = mean(length),
+	      lenvar = sd(length)) %>%
+    na.omit()
+
+cod_mnlenvar_grpAges <- 
     lengths.at.age %>%
     group_by(age.group) %>%
-    summarize(length.mean = mean(length), length.sd = sd(length)) %>% 
+    summarize(mnlen = mean(length),
+	      lenvar = sd(length)) %>% 
     na.omit()
 
 
@@ -52,7 +60,7 @@ cod.length.mn.sd <-
 # use survey numbers and total atlantis numbers to calculate proportion for survey
 ###################################################################################
 survey.numbers <- 
-    translate.all.nu() %>%
+    fjolst_translate(all.nu) %>%
     filter(species.code == 1 & sample.id %in% stations$sample.id) %>%
     left_join(stations) %>%
     mutate(count = ifelse(number.counted == 1 & number.measured == 0, 

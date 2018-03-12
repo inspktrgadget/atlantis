@@ -41,26 +41,20 @@ source('functions/parseAges.R')
 #source('functions/calcCodMort.R')
 source('cod/modelCheck/getAtlantisMort3.R')
 # add mortality and parse ages based on m
-# I changed m for age classes 0 and 2 to 3x and 2x the
-# calculated mortalities, respectively. This just seemed to give a smoother
-# age distribution. I'm trying this more as a test to see if gadget
-# can fit to the 0 age class better this way. If it works you'll have to 
-# come up with a more formal algorithm for computing m at younger ages
-age.count <- 
-    left_join(is_fg_count, m.func.vals) %>%
+age_count <- 
+    left_join(is_fg_count, m_vals) %>%
     parseAges(.) %>%
-    arrange(year, area, month, day, depth, age)
+    arrange(year, month, day, area, depth, age)
 
 # redistribute lengths based on growth params
-smooth.len <- 
-    age.count %>% 
-    mutate(count = ifelse(count < 1, 0, count)) %>%
+smooth_len <- 
+    age_count %>% 
+    filter(count >= 1) %>%
     left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0-0.20), age),
-                           vb(linf, k, t0, age))) %>%
-    select(depth, area, year, month, day, group, cohort, weight, length,
+    mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
+                           vb(linf, k+0.01, t0, age))) %>%
+    select(depth, area, year, month, day, group, cohort, weight, length, 
            maturity_stage, age, count)
-
 
 # set up length groups and survey parameters
 length_group <-  seq(0.5, 200.5, by=1)
@@ -73,21 +67,21 @@ survey_suitability <- 1.5e-04 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
 survey_sigma <- 0 # 8.37e-06
 
 # Import entire Cod/Haddock content for one sample point so we can use this as a tracer value
-is_fg_tracer <- smooth.len[
+is_fg_tracer <- smooth_len[
     #is_fg_count$year == attr(is_dir, 'start_year') &
-        smooth.len$month %in% c(1),]
+        smooth_len$month %in% c(1),]
 is_fg_tracer$species <- fg_group$MfdbCode
 is_fg_tracer$areacell <- is_fg_tracer$area
 is_fg_tracer$sampling_type <- 'Bio'
 
 # create survey from tracer values
-is_fg_survey <- smooth.len[
-    smooth.len$area %in% paste('Box', 0:52, sep='') &
-        smooth.len$month %in% c(3,9),] %>%
+is_fg_survey <- smooth_len[
+    smooth_len$area %in% paste('Box', 0:52, sep='') &
+        smooth_len$month %in% c(3,9),] %>%
     mutate(sampling_type = ifelse(month == 3,
                                   "SprSurvey",
                                   "AutSurvey")) %>%
-    atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
+    atlantis_tracer_add_lengthgroups(length_group, sqrt(sigma_per_cohort)) %>%
     atlantis_tracer_survey_select(length_group, rep(0.001, length(length_group)), 0)
 
 # ss.selector <- function(len, sel_b, sel_lsm) {

@@ -54,7 +54,7 @@ cod0 <-
                   maxage = stock0_maxage,
                   minlength = 1,
                   maxlength = 60,
-                  dl = 5,
+                  dl = 1,
                   livesonareas = 1) %>%
     gadget_update("doesgrow",
                   growthparameters=c(linf=sprintf("#%s.linf", species_name), 
@@ -63,7 +63,7 @@ cod0 <-
                                      beta=weight_beta),
                   beta=sprintf("(* #%1$s.bbin.mult #%s.bbin)", species_name)) %>%
     gadget_update("naturalmortality", 
-                  rep(0.14, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
+                  rep(0.15, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
     gadget_update("initialconditions",
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
@@ -131,8 +131,8 @@ cod <-
                   minage = stock_minage,
                   maxage = stock_maxage,
                   minlength = 1,
-                  maxlength = 199,
-                  dl = 5,
+                  maxlength = 150,
+                  dl = 1,
                   livesonareas = 1) %>%
     gadget_update("doesgrow",
                   growthparameters=c(linf=sprintf("#%s.linf", species_name), 
@@ -141,7 +141,7 @@ cod <-
                                      beta=weight_beta),
                   beta=sprintf("(* #%1$s.bbin.mult #%1$s.bbin)", .[[1]]$stockname)) %>%
     gadget_update("naturalmortality", 
-                  rep(0.14, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
+                  rep(0.15, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
     gadget_update("initialconditions",
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 

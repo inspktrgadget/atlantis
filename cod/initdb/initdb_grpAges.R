@@ -1,4 +1,4 @@
-## this code is exactly the same as initdb.R in the initdb directory
+gg## this code is exactly the same as initdb.R in the initdb directory
 ## just without the mfdb import lines.
 library(plyr)
 library(dplyr)
@@ -24,8 +24,8 @@ mfdb_import <- TRUE
 
 if (mfdb_import) {
     # mfdb('atlantis_constSurvey_0.001', destroy_schema=T)
-    mfdb("atlantis_logsurv_parseAges", destroy_schema=TRUE)
-    mdb <- mfdb('atlantis_logsurv_parseAges')
+    mfdb("atlantis_logsurv_grpAges", destroy_schema=TRUE)
+    mdb <- mfdb('atlantis_logsurv_grpAges')
 }
 
 # read in dir and options
@@ -64,55 +64,21 @@ fgName <- 'Cod'
 fg_group <- is_functional_groups[c(is_functional_groups$Name == fgName),]
 is_fg_count <- atlantis_fg_tracer(is_dir, is_area_data, fg_group)
 
-# distribute 2 year atlantis age groups to single year classes
-source('functions/calcGrowth.R')
-#source('functions/calcWtGrowth.R')
-source('functions/parseAges.R')
-#source('functions/calcCodMort.R')
-source('cod/modelCheck/getAtlantisMort3.R')
-# add mortality and parse ages based on m
-age_count <- 
-    left_join(is_fg_count, m_vals) %>%
-    parseAges(.) %>%
-    arrange(year, month, day, area, depth, age)
-
-# redistribute lengths based on growth params
-smooth_len <- 
-    age_count %>% 
-    filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
-                           vb(linf, k+0.01, t0, age))) %>%
-    select(depth, area, year, month, day, group, cohort, weight, length, 
-           maturity_stage, age, count)
-
-
 # set up length groups and survey parameters
 length_group <-  seq(0.5, 200.5, by=1)
-#length_group <-  seq(0,max(is_fg_count$length, na.rm=T),by=10)
-sigma_per_cohort <- c(cod_mnlenvar_yearclass$lenvar)
+sigma_per_cohort <- c(cod_mnlenvar_grpAges$lenvar)
 # see ./surveySelectivity.R, ./getCodLengthVar.R-lines 49-EOF for suitability params
 sel_lsm <- 49
 sel_b <- 0.046 # Controls the shape of the curve
 survey_suitability <- 1.5e-04 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
 survey_sigma <- 0 # 8.37e-06
 
-# Import entire Cod/Haddock content for one sample point so we can use this as a tracer value
-#is_fg_tracer <- is_fg_count[
-#    #is_fg_count$year == attr(is_dir, 'start_year') &
-#    is_fg_count$month %in% c(1),]
-#is_fg_tracer$species <- fg_group$MfdbCode
-#is_fg_tracer$areacell <- is_fg_tracer$area
-#is_fg_tracer$sampling_type <- 'Bio'
-#mfdb_import_survey(mdb, is_fg_tracer, data_source = paste0('atlantis_tracer_', fg_group$Name))
-#print('Tracer data imported')
-#
 # create survey from tracer values
 # keep spr survey as 4 because of gadget order of operations
 # keep aut survey as 9 because of recruitment jumps in atlantis
-is_fg_survey <- smooth_len[
-    smooth_len$area %in% paste('Box', 0:52, sep='') &
-        smooth_len$month %in% c(4,9),] %>%
+is_fg_survey <- is_fg_count[
+    is_fg_count$area %in% paste('Box', 0:52, sep='') &
+        is_fg_count$month %in% c(4,9),] %>%
 		mutate(sampling_type = ifelse(month == 4,
                                   "SprSurveyTotals",
                                   "AutSurveyTotals")) %>%
@@ -210,32 +176,6 @@ wl <- getStructN(is_dir, is_area_data, fg_group)
 
 age_catch_wl <- left_join(age_catch, wl)
 
-# parse the catch age-length data to single year classes
-
-# for catches we need to also take selectivity into account when parsing
-# I painstakingly, by trial and error, found some parameters for parsing_selectivity()
-# that are "good enough", these are by no means optimized
-flt_lsm <- 3.25
-flt_b <- 1.45 # Controls the shape of the curve
-flt_int <- -0.2
-parsing_selectivity <- function(m, age) {
-    ((m - flt_int) / (1 + exp(-flt_b * (age - flt_lsm)))) + flt_int
-}
-parsed_age_catch_wl <- 
-    age_catch_wl %>% 
-    left_join(m_vals) %>%
-    mutate(m = parsing_selectivity(0.35, age)) %>%
-    parseCatchAges() %>% 
-    arrange(year, area, month, age)
-
-smooth_len_catch <- 
-    parsed_age_catch_wl %>%
-    filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
-                           vb(linf, k, t0, age))) %>%
-    select(area, year, month, fishery, group, cohort, weight, length, 
-           age, count)
 
 # see codSampleNumber.R - line 61 to EOF
 fleet_suitability <- rep(0.02, length(length_group))
@@ -244,7 +184,7 @@ fleet_sigma <- 5.7e-07
 # trying to avoid adding error in lengths here as well
 
 comm_catch_samples <- 
-    smooth_len_catch %>%
+    age_catch_wl %>%
     atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
     atlantis_tracer_survey_select(length_group, fleet_suitability, 0) %>%
     filter(count >= 1)

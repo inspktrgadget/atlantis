@@ -3,6 +3,8 @@
 *.RData
 cod/codVersions/*
 cod/codModel/*
+cod/codModel2/*
+cod/hvyCnts/*
 atlantisInfo/*
 modelRunProtocol.txt
 /template/
