@@ -42,7 +42,7 @@ nls_growth <- nls(length ~ vb(linf, k, t0, age), data=atl_sub,
                   weights = count)
 
 # looks pretty good, use parameters in vbMin for growth
-grPlot <- 
+gr_plot <- 
     ggplot(data=sample_n(atl_sub, 1e4), aes(x=age, y=length)) + geom_point() +
     stat_function(fun = vb, 
                   args = list(linf = coef(nls_growth)["linf"],
@@ -96,11 +96,25 @@ medParamGrPlot <-
 
 
 
+#-------------------------------------------------------------------------
+# now trying to find opimal parameters using vb_simple
+source("../functions/vbSimple.R")
+parsed_vb_simple_params <- nlm(vb_simple_sse, c(130, 0.15, 25), 
+                               length, age)
 
 
-
-
-
+vb_simple_plot <- 
+    ggplot(data=sample_n(atl_sub, 1e4), aes(x=age, y=length)) + 
+    geom_point() +
+    stat_function(fun = vb_simple,
+                  args = list(linf = parsed_vb_simple_params$estimate[1],
+                              k = parsed_vb_simple_params$estimate[2],
+                              recl = parsed_vb_simple_params$estimate[3])) + 
+    stat_function(fun = vb_simple,
+                  args = list(linf = 130,
+                              k = 0.15,
+                              recl = 20),
+                  color = "red")
 
 
 
