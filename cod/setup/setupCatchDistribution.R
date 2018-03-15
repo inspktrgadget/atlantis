@@ -11,7 +11,7 @@ dl <- cod[[1]]$dl
 ## try using mfdb_group(all = minage:maxage) for the age in ldist
 ldist_spr <- 
     mfdb_sample_count(mdb, c("age", "length"), c(list(
-        sampling_type = "SprSurvey",
+        sampling_type = "SprSurveyTotals",
         species = data_defaults$species,
         age = mfdb_group(all=seq(ldist_minage, ldist_maxage, by = 2)),
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
@@ -22,7 +22,7 @@ ldist_spr <-
 # Age surveys
 aldist_spr <-
     mfdb_sample_count(mdb, c("age", "length"), c(list(
-        sampling_type = "SprSurvey",
+        sampling_type = "SprSurveyTotals",
         age = mfdb_interval("age", seq(aldist_minage, aldist_maxage, by = 2),
                             open_ended=c("upper")),
         species=data_defaults$species,
@@ -36,7 +36,7 @@ aldist_spr <-
 # Query length data to create autumn survey catchdistribution components
 ldist_aut <- 
     mfdb_sample_count(mdb, c("age", "length"), c(list(
-        sampling_type = "AutSurvey",
+        sampling_type = "AutSurveyTotals",
         species = data_defaults$species, 
         age = mfdb_group(all=seq(ldist_minage, ldist_maxage, by = 2)), 
         length = mfdb_interval("len", seq(minlength, maxlength, by = dl),
@@ -46,7 +46,7 @@ ldist_aut <-
 ## Age autumn survey
 aldist_aut <-
     mfdb_sample_count(mdb, c("age", "length"), c(list(
-        sampling_type = "AutSurvey",
+        sampling_type = "AutSurveyTotals",
         age = mfdb_interval("age", seq(aldist_minage, aldist_maxage, by = 2),
                             open_ended=c("upper")),
         species=data_defaults$species,
