@@ -1,8 +1,8 @@
 minlength <- cod[[1]]$minlength
 maxlength <- cod[[1]]$maxlength
-ldist_minage <- 2
+ldist_minage <- 0
 ldist_maxage <- 19
-aldist_minage <- 2
+aldist_minage <- 0
 aldist_maxage <- 12
 dl <- cod[[1]]$dl
 dage <- 1
@@ -55,6 +55,8 @@ aldist_aut <-
                                open_ended=c("upper", "lower"))),
         data_defaults))
 
+ldist_minage <- 2
+aldist_minage <- 2
 
 # Query length data to create bmt catchdistribution components
 ldist_comm <- 

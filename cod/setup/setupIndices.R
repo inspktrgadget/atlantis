@@ -1,5 +1,10 @@
 ## spring survey indices
 
+spr_si_0_20 <- mfdb_sample_count(mdb, c("length"), c(list(
+    sampling_type ="SprSurveyTotals",
+    length = mfdb_interval("len", c(0,20))),
+    data_defaults))
+
 spr_si_20_35 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
     length = mfdb_interval("len", c(20,35))),
@@ -26,6 +31,11 @@ spr_si_80_pl <- mfdb_sample_count(mdb, c("length"), c(list(
     data_defaults))
 
 ## autumn survey indices
+
+aut_si_0_20 <- mfdb_sample_count(mdb, c("length"), c(list(
+    sampling_type ="AutSurveyTotals",
+    length = mfdb_interval("len", c(0,20))),
+    data_defaults))
 
 aut_si_20_35 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
