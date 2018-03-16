@@ -39,18 +39,24 @@ age.groups <- data.frame(age = 0:19,
 lengths.at.age <- mutate(lengths.at.age,
                           age.group = ifelse(age %% 2 == 0, age, age-1))
 
+se <- function(vec) {
+	return(sd(vec) / sqrt(length(vec)))
+}
+
 cod_mnlenvar_yearclass <- 
     lengths.at.age %>%
     group_by(age) %>%
     summarize(mnlen = mean(length),
-	      lenvar = sd(length)) %>%
+	      lenvar = sd(length),
+	      len_se = se(length)) %>%
     na.omit()
 
 cod_mnlenvar_grpAges <- 
     lengths.at.age %>%
     group_by(age.group) %>%
     summarize(mnlen = mean(length),
-	      lenvar = sd(length)) %>% 
+	      lenvar = sd(length),
+	      len_se = se(length)) %>% 
     na.omit()
 
 

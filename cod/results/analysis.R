@@ -13,6 +13,7 @@ library(Rgadget)
 #setwd("~/gadget/models/atlantis/cod/codVersions/codMod105")
 mod_dir <- "~/gadget/models/atlantis/cod/codModel"
 setwd(mod_dir)
+fit <- gadget.fit(wgts = NULL, main.file = "main", params.file = "params.final")
 fit <- gadget.fit(wgts="WGTS", main.file="WGTS/main.final",
                   fleet.predict = data.frame(fleet = "comm", ratio=1),
                   mat.par=c(-6.510198, 1.108594),
