@@ -20,7 +20,7 @@ source("functions/stripFleetAges.R")
 source("cod/initdb/getCodLengthVar.R") # source cod length sd at age group
 
 
-mfdb_import <- TRUE
+mfdb_import <- FALSE
 
 if (mfdb_import) {
     # mfdb("atlantis_constSurvey_0.001", destroy_schema=T)

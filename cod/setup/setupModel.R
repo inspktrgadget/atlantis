@@ -53,7 +53,7 @@ cod0 <-
                   minage = stock0_minage,
                   maxage = stock0_maxage,
                   minlength = 1,
-                  maxlength = 35,
+                  maxlength = 36,
                   dl = 1,
                   livesonareas = 1) %>%
     gadget_update("doesgrow",
@@ -64,7 +64,7 @@ cod0 <-
                   beta=sprintf("(* #%1$s.bbin.mult #%s.bbin)", species_name),
 		  maxlengthgroupgrowth = 10) %>%
     gadget_update("naturalmortality", 
-                  rep(0.15, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
+                  c(0.22, 0.19)) %>%
     gadget_update("initialconditions",
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
@@ -132,7 +132,7 @@ cod <-
                   minage = stock_minage,
                   maxage = stock_maxage,
                   minlength = 1,
-                  maxlength = 150,
+                  maxlength = 130,
                   dl = 1,
                   livesonareas = 1) %>%
     gadget_update("doesgrow",
@@ -143,7 +143,7 @@ cod <-
                   beta=sprintf("(* #%1$s.bbin.mult #%1$s.bbin)", .[[1]]$stockname),
 		  maxlengthgroupgrowth = 10) %>%
     gadget_update("naturalmortality", 
-                  rep(0.15, ((.[[1]]$maxage - .[[1]]$minage) + 1))) %>%
+                  c(rep(0.15, ((.[[1]]$maxage - .[[1]]$minage))), 0.25)) %>%
     gadget_update("initialconditions",
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 

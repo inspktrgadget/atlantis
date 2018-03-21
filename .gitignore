@@ -12,6 +12,7 @@ codeFromErla/*
 sppTemplate/*
 cod/setup/copyModel.sh
 cod/setup/itterfitter.sh
+cod/totalcounts
 cod/age0.1model/*
 haddock/age0.1model/
 cod/age5yrModel/

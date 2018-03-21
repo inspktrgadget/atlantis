@@ -3,12 +3,11 @@ setwd("~/gadget/models/atlantis/cod/codModel")
 gt <- system.time(
     tmp <- gadget.iterative(rew.sI=TRUE,
                             main="main",
-                            grouping=list(short=c("spr_si_0_20", "aut_si_0_20",
-						  "spr_si_20_35", "aut_si_20_35"),
-					  mid=c("spr_si_35_45", "aut_si_35_45",
-						"spr_si_45_60", "aut_si_45_60"),
-					  long=c("spr_si_60_80", "aut_si_60_80",
-						 "spr_si_80_pl", "aut_si_80_pl")),
+                            grouping=list(`18_34`=c("spr.si.18.34", "aut.si.18.34"),
+					  `34_48`=c("spr.si.34.48", "aut.si.34.48"),
+					  `48_60`=c("spr.si.48.60", "aut.si.48.60"),
+					  `60_70`=c("spr.si.60.70", "aut.si.60.70"),
+					  `70_pl`=c("spr.si.70.pl", "aut.si.70.pl")),
                             wgts="WGTS")
 )[3]
 
@@ -17,7 +16,3 @@ print(paste("Iterative model took",
             "hours and",
             c((gt - (gt %/% 3600) * 3600) %/% 60),
             "minutes to run."))
-
-# survey=c("ldist_spr", "ldist_aut",
-#          "aldist_spr", "aldist_aut"),
-# comm=c("ldist_bmt", "aldist_bmt")

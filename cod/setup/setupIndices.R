@@ -1,63 +1,63 @@
 ## spring survey indices
 
-spr_si_0_20 <- mfdb_sample_count(mdb, c("length"), c(list(
+spr_si_0_18 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
-    length = mfdb_interval("len", c(0,20))),
+    length = mfdb_interval("len", c(0,18))),
     data_defaults))
 
-spr_si_20_35 <- mfdb_sample_count(mdb, c("length"), c(list(
+spr_si_18_34 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
-    length = mfdb_interval("len", c(20,35))),
+    length = mfdb_interval("len", c(18,34))),
     data_defaults))
 
-spr_si_35_45 <- mfdb_sample_count(mdb, c("length"), c(list(
+spr_si_34_48 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
-    length = mfdb_interval("len", c(35,45))),    
+    length = mfdb_interval("len", c(34,48))),    
     data_defaults))
 
-spr_si_45_60 <- mfdb_sample_count(mdb, c("length"), c(list(
+spr_si_48_60 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
-    length = mfdb_interval("len", c(45,60))),    
+    length = mfdb_interval("len", c(48,60))),    
     data_defaults))
 
-spr_si_60_80 <- mfdb_sample_count(mdb, c("length"), c(list(
+spr_si_60_70 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
-    length = mfdb_interval("len", c(60,80))),    
+    length = mfdb_interval("len", c(60,70))),    
     data_defaults))
 
-spr_si_80_pl <- mfdb_sample_count(mdb, c("length"), c(list(
+spr_si_70_pl <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="SprSurveyTotals",
-    length = mfdb_interval("len", c(80, maxlength), open_ended="upper")),    
+    length = mfdb_interval("len", c(70, maxlength), open_ended="upper")),    
     data_defaults))
 
 ## autumn survey indices
 
-aut_si_0_20 <- mfdb_sample_count(mdb, c("length"), c(list(
+aut_si_0_18 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
-    length = mfdb_interval("len", c(0,20))),
+    length = mfdb_interval("len", c(0,18))),
     data_defaults))
 
-aut_si_20_35 <- mfdb_sample_count(mdb, c("length"), c(list(
+aut_si_18_34 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
-    length = mfdb_interval("len", c(20,35))),
+    length = mfdb_interval("len", c(18,34))),
     data_defaults))
 
-aut_si_35_45 <- mfdb_sample_count(mdb, c("length"), c(list(
+aut_si_34_48 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
-    length = mfdb_interval("len", c(35,45))),    
+    length = mfdb_interval("len", c(34,48))),    
     data_defaults))
 
-aut_si_45_60 <- mfdb_sample_count(mdb, c("length"), c(list(
+aut_si_48_60 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
-    length = mfdb_interval("len", c(45,60))),    
+    length = mfdb_interval("len", c(48,60))),    
     data_defaults))
 
-aut_si_60_80 <- mfdb_sample_count(mdb, c("length"), c(list(
+aut_si_60_70 <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
-    length = mfdb_interval("len", c(60,80))),    
+    length = mfdb_interval("len", c(60,70))),    
     data_defaults))
 
-aut_si_80_pl <- mfdb_sample_count(mdb, c("length"), c(list(
+aut_si_70_pl <- mfdb_sample_count(mdb, c("length"), c(list(
     sampling_type ="AutSurveyTotals",
-    length = mfdb_interval("len", c(80, maxlength), open_ended="upper")),    
+    length = mfdb_interval("len", c(70, maxlength), open_ended="upper")),    
     data_defaults))

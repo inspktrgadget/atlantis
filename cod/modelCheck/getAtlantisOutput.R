@@ -58,12 +58,12 @@ smooth_len <-
 
 # set up length groups and survey parameters
 length_group <-  seq(0.5, 200.5, by=1)
-#length_group <-  seq(0,max(is_fg_count$length, na.rm=T),by=10)
-sigma_per_cohort <- c(cod.length.mn.sd$length.sd)
+sigma_per_cohort <- c(2.5,2.5,2.5,2.5,3,3,3,3,3,3.5,3.5,3.5,3.5,3.5,4,4,4,4.5,4.5,5)
+#sigma_per_cohort <- c(cod.length.mn.sd$length.sd)
 # see ./surveySelectivity.R, ./getCodLengthVar.R-lines 49-EOF for suitability params
 sel_lsm <- 49
 sel_b <- 0.046 # Controls the shape of the curve
-survey_suitability <- 1.5e-04 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
+survey_suitability <- 0.001 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
 survey_sigma <- 0 # 8.37e-06
 
 # Import entire Cod/Haddock content for one sample point so we can use this as a tracer value
@@ -77,12 +77,12 @@ is_fg_tracer$sampling_type <- 'Bio'
 # create survey from tracer values
 is_fg_survey <- smooth_len[
     smooth_len$area %in% paste('Box', 0:52, sep='') &
-        smooth_len$month %in% c(3,9),] %>%
+        smooth_len$month %in% c(4,9),] %>%
     mutate(sampling_type = ifelse(month == 3,
                                   "SprSurvey",
                                   "AutSurvey")) %>%
-    atlantis_tracer_add_lengthgroups(length_group, sqrt(sigma_per_cohort)) %>%
-    atlantis_tracer_survey_select(length_group, rep(0.001, length(length_group)), 0)
+    atlantis_tracer_add_lengthgroups(length_group, sigma_per_cohort) %>%
+    atlantis_tracer_survey_select(length_group, survey_suitability, 0)
 
 # ss.selector <- function(len, sel_b, sel_lsm) {
 #     1.5e-04 / (1.0 + exp(-sel_b * (len - sel_lsm)))

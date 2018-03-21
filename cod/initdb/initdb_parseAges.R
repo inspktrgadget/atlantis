@@ -23,7 +23,6 @@ source('cod/initdb/getCodLengthVar.R') # source cod length sd at age group
 mfdb_import <- TRUE
 
 if (mfdb_import) {
-    # mfdb('atlantis_constSurvey_0.001', destroy_schema=T)
     mfdb("atlantis_logsurv_parseAges", destroy_schema=TRUE)
     mdb <- mfdb('atlantis_logsurv_parseAges')
 }
@@ -81,7 +80,7 @@ smooth_len <-
     age_count %>% 
     filter(count >= 1) %>%
     left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
+    mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
                            vb(linf, k+0.01, t0, age))) %>%
     select(depth, area, year, month, day, group, cohort, weight, length, 
            maturity_stage, age, count)
@@ -89,12 +88,12 @@ smooth_len <-
 
 # set up length groups and survey parameters
 length_group <-  seq(0.5, 200.5, by=1)
-#length_group <-  seq(0,max(is_fg_count$length, na.rm=T),by=10)
-sigma_per_cohort <- c(cod_mnlenvar_yearclass$lenvar)
+sigma_per_cohort <- c(2.5,2.5,2.5,2.5,3,3,3,3,3,3.5,3.5,3.5,3.5,3.5,4,4,4,4.5,4.5,5)
+#sigma_per_cohort <- c(cod_mnlenvar_yearclass$lenvar)
 # see ./surveySelectivity.R, ./getCodLengthVar.R-lines 49-EOF for suitability params
 sel_lsm <- 49
 sel_b <- 0.046 # Controls the shape of the curve
-survey_suitability <- 1.5e-04 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
+survey_suitability <- 0.001 / (1.0 + exp(-sel_b * (length_group - sel_lsm)))
 survey_sigma <- 0 # 8.37e-06
 
 # Import entire Cod/Haddock content for one sample point so we can use this as a tracer value
@@ -132,7 +131,7 @@ if (mfdb_import) {
 
 # strip ages and lengths from survey to mimic real world data
 # see '~gadget/gadget-models/atlantis/cod/initdb/codSampleNumbers.R
-al_survey <- stripAgeLength(survey, 0.7, 0.1)
+al_survey <- stripAgeLength(survey, 0.75, 0.25)
 al_survey$length <- round(al_survey$length)
 al_survey$weight <- round(al_survey$weight)
 
@@ -233,12 +232,12 @@ smooth_len_catch <-
     filter(count >= 1) %>%
     left_join(vbMin) %>%
     mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
-                           vb(linf, k, t0, age))) %>%
+                           vb(linf, k+0.01, t0, age))) %>%
     select(area, year, month, fishery, group, cohort, weight, length, 
            age, count)
 
 # see codSampleNumber.R - line 61 to EOF
-fleet_suitability <- rep(0.02, length(length_group))
+fleet_suitability <- rep(0.001, length(length_group))
 fleet_sigma <- 5.7e-07
 
 # trying to avoid adding error in lengths here as well
@@ -250,7 +249,7 @@ comm_catch_samples <-
     filter(count >= 1)
 
 # strip age data out
-comm_al_samples <- stripFleetAges(comm_catch_samples, 0.05)
+comm_al_samples <- stripFleetAges(comm_catch_samples, 0.25)
 comm_al_samples$species <- "COD"
 comm_al_samples$sampling_type <- 'CommSurvey'
 comm_al_samples$gear <- "BMT"

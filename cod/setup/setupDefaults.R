@@ -4,7 +4,7 @@ areas <- read.csv("atlantisInfo/boxInfo.csv", header=T)
 boxes <- sprintf("Box%s", filter(areas, boundary == 0)$box_id)
 
 st_year <- 1975
-end_year <- 1997
+end_year <- 2012
 data_st_year <- 1985
 year_range <- st_year:end_year
 # setup model defaults

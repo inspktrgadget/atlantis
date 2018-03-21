@@ -3,7 +3,7 @@ library(mfdb)
 library(mfdbatlantis)
 
 # setwd("~/gadget/models/atlantis")
-gadget_st_year <- 1970
+gadget_st_year <- 1975
 
 is_dir <- atlantis_directory("~/Dropbox/Paul_IA/OutM57BioV225FMV88_PF")
 

@@ -10,14 +10,14 @@ source("../functions/gadgetUtils.R")
 
 # some basic name and directory structure defaults
 setup_d <- "cod/setup"
-gd <- gadget_directory("cod/codModel")
+gd <- gadget_directory("cod/codModel2")
 species_name <- "cod"
 stock0 <- "cod0"
 stock <- "cod"
 stocknames <- c(stock0, stock)
 
 # connect to mfdb database
-mdb <- mfdb("atlantis_logsurv_parseAges_allData")
+mdb <- mfdb("atlantis_logsurv_parseAges")
 
 # fetch defaults
 source(sprintf("%s/setupDefaults.R", setup_d))

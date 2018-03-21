@@ -258,7 +258,7 @@ f_by_age <-
     summarize(f = mean(mortality))
 
 f_by_age_plot <- 
-    ggplot(f.by.age, aes(x=year, y=f)) + 
+    ggplot(f_by_age, aes(x=year, y=f)) + 
     geom_line() + facet_wrap(~age) +
     xlab("Year") + ylab("F") + theme_bw()
 
