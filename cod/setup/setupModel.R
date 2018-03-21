@@ -97,7 +97,8 @@ cod0 <-
                           mean = stock0_meanlength[1],
                           stddev = rec_sd,
                           alpha = weight_alpha,
-                          beta = weight_beta))
+                          beta = weight_beta)) %>%
+    gadget_update("iseaten", 1)
 
 
 # pre-define some paramater file arguments for 2-12 year old stock

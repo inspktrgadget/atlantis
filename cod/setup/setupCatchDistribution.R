@@ -1,8 +1,8 @@
 minlength <- cod[[1]]$minlength
 maxlength <- cod[[1]]$maxlength
-ldist_minage <- 2
+ldist_minage <- 0
 ldist_maxage <- 19
-aldist_minage <- 2
+aldist_minage <- 0
 aldist_maxage <- 13
 dl <- 1
 dage <- 1
