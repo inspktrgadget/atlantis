@@ -3,8 +3,9 @@ setwd("~/gadget/models/atlantis/cod/codModel")
 gt <- system.time(
     tmp <- gadget.iterative(rew.sI=TRUE,
                             main="main",
-                            grouping=list(`18_34`=c("spr.si.18.34", "aut.si.18.34"),
-					  `34_48`=c("spr.si.34.48", "aut.si.34.48"),
+                            grouping=list(`0_18`=c("spr.si.0.18", "aut.si.0.18"),
+					  `18_36`=c("spr.si.18.36", "aut.si.18.36"),
+					  `36_48`=c("spr.si.36.48", "aut.si.36.48"),
 					  `48_60`=c("spr.si.48.60", "aut.si.48.60"),
 					  `60_70`=c("spr.si.60.70", "aut.si.60.70"),
 					  `70_pl`=c("spr.si.70.pl", "aut.si.70.pl")),

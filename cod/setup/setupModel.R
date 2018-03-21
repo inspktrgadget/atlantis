@@ -64,7 +64,7 @@ cod0 <-
                   beta=sprintf("(* #%1$s.bbin.mult #%s.bbin)", species_name),
 		  maxlengthgroupgrowth = 10) %>%
     gadget_update("naturalmortality", 
-                  c(0.22, 0.19)) %>%
+                  c(0.2, 0.175)) %>%
     gadget_update("initialconditions",
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 
@@ -143,7 +143,7 @@ cod <-
                   beta=sprintf("(* #%1$s.bbin.mult #%1$s.bbin)", .[[1]]$stockname),
 		  maxlengthgroupgrowth = 10) %>%
     gadget_update("naturalmortality", 
-                  c(rep(0.15, ((.[[1]]$maxage - .[[1]]$minage))), 0.25)) %>%
+                  c(rep(0.15, ((.[[1]]$maxage - .[[1]]$minage))), 0.3)) %>%
     gadget_update("initialconditions",
                   normalparam=
                       data_frame(age = .[[1]]$minage:.[[1]]$maxage, 

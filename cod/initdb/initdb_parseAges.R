@@ -88,8 +88,8 @@ smooth_len <-
 
 # set up length groups and survey parameters
 length_group <-  seq(0.5, 200.5, by=1)
-sigma_per_cohort <- c(2.5,2.5,2.5,2.5,3,3,3,3,3,3.5,3.5,3.5,3.5,3.5,4,4,4,4.5,4.5,5)
-#sigma_per_cohort <- c(cod_mnlenvar_yearclass$lenvar)
+#sigma_per_cohort <- c(2.5,2.5,2.5,2.5,3,3,3,3,3,3.5,3.5,3.5,3.5,3.5,4,4,4,4.5,4.5,5)
+sigma_per_cohort <- sqrt(cod_mnlenvar_yearclass$lenvar)
 # see ./surveySelectivity.R, ./getCodLengthVar.R-lines 49-EOF for suitability params
 sel_lsm <- 49
 sel_b <- 0.046 # Controls the shape of the curve
