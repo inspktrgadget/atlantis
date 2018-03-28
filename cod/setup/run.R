@@ -1,3 +1,4 @@
+library(methods)
 library(Rgadget)
 setwd("~/gadget/models/atlantis/cod/codModel")
 gt <- system.time(
@@ -17,3 +18,5 @@ print(paste("Iterative model took",
             "hours and",
             c((gt - (gt %/% 3600) * 3600) %/% 60),
             "minutes to run."))
+
+rmarkdown::render("gadAtlResults.Rmd")

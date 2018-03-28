@@ -53,14 +53,14 @@ gadgetlikelihood("likelihood", gd$dir, missingOkay=T) %>%
                    data = spr_si_0_18[[1]],
                    fittype = "fixedslopeloglinearfit",
                    slope = 1,
-                   stocknames = stocknames) %>%
+                   stocknames = stock0) %>%
      gadget_update("surveyindices",
                    name = "spr.si.18.36",
                    weight = 1,
                    data = spr_si_18_36[[1]],
                    fittype = "fixedslopeloglinearfit",
                    slope = 1,
-                   stocknames = stocknames) %>%
+                   stocknames = stock0) %>%
      gadget_update("surveyindices",
                    name = "spr.si.36.48",
                    weight = 1,
@@ -95,14 +95,14 @@ gadgetlikelihood("likelihood", gd$dir, missingOkay=T) %>%
                    data = aut_si_0_18[[1]],
                    fittype = "fixedslopeloglinearfit",
                    slope = 1,
-                   stocknames = stocknames) %>%
+                   stocknames = stock0) %>%
      gadget_update("surveyindices",
                    name = "aut.si.18.36",
                    weight = 1,
                    data = aut_si_18_36[[1]],
                    fittype = "fixedslopeloglinearfit",
                    slope = 1,
-                   stocknames = stocknames) %>%
+                   stocknames = stock0) %>%
      gadget_update("surveyindices",
                    name = "aut.si.36.48",
                    weight = 1,

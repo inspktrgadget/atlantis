@@ -53,7 +53,7 @@ cod0 <-
                   minage = stock0_minage,
                   maxage = stock0_maxage,
                   minlength = 1,
-                  maxlength = 36,
+                  maxlength = 50,
                   dl = 1,
                   livesonareas = 1) %>%
     gadget_update("doesgrow",
@@ -80,7 +80,7 @@ cod0 <-
                                              .[[1]]$maxlength,
                                              .[[1]]$dl),
                                   mean = weight_alpha*length^weight_beta)) %>%
-    gadget_update("iseaten", 0) %>%
+    gadget_update("iseaten", 1) %>%
     gadget_update("doesmove",
                   transitionstocksandratios = c(stock, 1),
                   transitionstep = 4) %>%
@@ -97,8 +97,7 @@ cod0 <-
                           mean = stock0_meanlength[1],
                           stddev = rec_sd,
                           alpha = weight_alpha,
-                          beta = weight_beta)) %>%
-    gadget_update("iseaten", 1)
+                          beta = weight_beta)) 
 
 
 # pre-define some paramater file arguments for 2-12 year old stock
@@ -133,7 +132,7 @@ cod <-
                   minage = stock_minage,
                   maxage = stock_maxage,
                   minlength = 1,
-                  maxlength = 130,
+                  maxlength = 150,
                   dl = 1,
                   livesonareas = 1) %>%
     gadget_update("doesgrow",

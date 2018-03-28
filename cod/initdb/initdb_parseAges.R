@@ -17,6 +17,7 @@ source('functions/commCatchAges.R')
 source('functions/discardAges.R')
 source('functions/getStructN.R')
 source('functions/stripFleetAges.R')
+source('../functions/vbParams.R')
 source('cod/initdb/getCodLengthVar.R') # source cod length sd at age group
 
 
@@ -64,12 +65,14 @@ fg_group <- is_functional_groups[c(is_functional_groups$Name == fgName),]
 is_fg_count <- atlantis_fg_tracer(is_dir, is_area_data, fg_group)
 
 # distribute 2 year atlantis age groups to single year classes
-source('functions/calcGrowth.R')
+#source('functions/calcGrowth.R')
 #source('functions/calcWtGrowth.R')
 source('functions/parseAges.R')
 #source('functions/calcCodMort.R')
-source('cod/modelCheck/getAtlantisMort3.R')
+#source('cod/modelCheck/getAtlantisMort3.R')
 # add mortality and parse ages based on m
+
+m_vals <- data.frame(age = 0:19, m = 0.338)
 age_count <- 
     left_join(is_fg_count, m_vals) %>%
     parseAges(.) %>%
@@ -78,10 +81,12 @@ age_count <-
 # redistribute lengths based on growth params
 smooth_len <- 
     age_count %>% 
-    filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
-                           vb(linf, k+0.01, t0, age))) %>%
+    filter(count >= 4) %>%
+    mutate(length = vb(linf = 134, k = 0.13, t0 = 0,
+		       age = age + (month / 12))) %>%
+    #left_join(vbMin) %>%
+    #mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
+    #                       vb(linf, k+0.01, t0, age))) %>%
     select(depth, area, year, month, day, group, cohort, weight, length, 
            maturity_stage, age, count)
 
@@ -230,9 +235,11 @@ parsed_age_catch_wl <-
 smooth_len_catch <- 
     parsed_age_catch_wl %>%
     filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
-                           vb(linf, k+0.01, t0, age))) %>%
+    mutate(length = vb(linf = 134, k = 0.13, t0 = 0,
+		       age = age + (month / 12))) %>%
+    #left_join(vbMin) %>%
+    #mutate(length = ifelse(age == 0, vb(linf, k, t0, age),
+    #                       vb(linf, k+0.01, t0, age))) %>%
     select(area, year, month, fishery, group, cohort, weight, length, 
            age, count)
 

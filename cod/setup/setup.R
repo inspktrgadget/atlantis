@@ -4,13 +4,12 @@ library(dplyr)
 library(mfdb)
 library(Rgadget)
 
-
 setwd("/home/pfrater/gadget/models/atlantis")
 source("../functions/gadgetUtils.R")
 
 # some basic name and directory structure defaults
 setup_d <- "cod/setup"
-gd <- gadget_directory("cod/codModel2")
+gd <- gadget_directory("cod/codModel")
 species_name <- "cod"
 stock0 <- "cod0"
 stock <- "cod"
@@ -38,4 +37,5 @@ source(sprintf("%s/setupParams.R", setup_d))
 file.copy(sprintf("%s/run.R", setup_d), gd$dir)
 file.copy(sprintf("%s/mfrun.R", setup_d), gd$dir)
 file.copy(sprintf("%s/optinfofile", setup_d), gd$dir)
-
+file.copy(sprintf("%s/gadAtlResults.Rmd", setup_d), gd$dir)
+file.copy(sprintf("%s/renderResults.sh", setup_d), gd$dir)

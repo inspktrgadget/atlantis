@@ -32,8 +32,6 @@ aldist_spr <-
         data_defaults))
 
 
-
-
 # Query length data to create autumn survey catchdistribution components
 ldist_aut <- 
     mfdb_sample_count(mdb, c("age", "length"), c(list(

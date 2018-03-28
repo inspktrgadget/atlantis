@@ -32,7 +32,7 @@ atl_sub <-
 
 
 # compute growth parameters using nlm on functions in vbParams.R
-vb_min <- nlm(vb_sse, c(160, 0.05, -1), atl_sub$length, atl_sub$age)
+vb_min <- nlm(vb_sse, c(130, 0.15, -0.5), atl_sub$length, atl_sub$age)
 
 # trying the same as above but with nls and adding counts as a weight
 nls_growth <- nls(length ~ vb(linf, k, t0, age), data=atl_sub, 
@@ -44,25 +44,36 @@ nls_growth <- nls(length ~ vb(linf, k, t0, age), data=atl_sub,
 # distribute 2 year atlantis age groups to single year classes
 source("functions/calcGrowth.R")
 source("functions/parseAges.R")
-source("cod/modelCheck/getAtlantisMort3.R")
+#source("cod/modelCheck/getAtlantisMort3.R")
+m_vals <- data.frame(age = 0:19, m = 0.338)
 # add mortality and parse ages based on m
 age_count <- 
     left_join(is_fg_count, m_vals) %>%
     parseAges(.) %>%
     arrange(year, month, day, area, depth, age)
 
+vbMin <- 
+    data.frame(year = 1948:2013, 
+               month = sort(rep(1:12, 66))) %>%
+    mutate(linf = 134,
+           k = 0.15,
+           t0 = -0.45) %>%
+    arrange(year, month)
+
+
 # redistribute lengths based on growth params
 smooth_len <- 
     age_count %>% 
     filter(count >= 1) %>%
-    left_join(vbMin) %>%
-    mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
-                           vb(linf, k+0.01, t0, age))) %>%
+    mutate(length = vb(linf=134, k=0.13, t0=0, 
+                       age = age + (month / 12))) %>%
+    # mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
+    #                        vb(linf, k+0.01, t0, age))) %>%
     select(depth, area, year, month, day, group, cohort, weight, length, 
            maturity_stage, age, count)
 
 # compute vb growth parameters
-parsed_vb_min <- nlm(vb_sse, c(160, 0.05, -1), smooth_len$length, smooth_len$age)
+parsed_vb_min <- nlm(vb_sse, c(130, 0.14, -0.5), smooth_len$length, smooth_len$age)
 
 # doing the same but with nls
 parsed_nls_growth <- 
@@ -79,7 +90,7 @@ parsed_nls_params <- apply(parsed_nls_growth, 2, mean)
 # plot to compare
 plot(length ~ age, data=atl_sub, xlab = "Age", ylab = "Length (cm)")
 points(length ~ age, data=sample_n(smooth_len, 1e4), col = rgb(1,0,0,0.01))
-curve(vb_optimizer(vb_min$estimate, x), add = TRUE)
+curve(vb_optimizer(parsed_vb_min$estimate, x), add = TRUE)
 curve(vb_optimizer(parsed_nls_params, x), add = TRUE, col = "red")
 
 

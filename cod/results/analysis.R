@@ -43,7 +43,7 @@ summary_plot <-
 
 
 ## to calculate biomass index
-tmp <- mutate(fit$sidat, survey = ifelse(substr(name,1,3)=="aut","aut", "igfs"))
+tmp <- mutate(fit$sidat, survey = ifelse(substr(name,1,3)=="aut","aut", "spr"))
 tmp <- rbind.fill(tmp,
                   ddply(tmp,~year+survey, summarise,
                         observed = sum(observed*0.008249352*lower^3.026918 ),
@@ -54,7 +54,7 @@ tmp <- rbind.fill(tmp,
 
 # plot the model survey data over the actual survey data
 si_spr <-
-    ggplot(subset(tmp, survey=="igfs"), aes(year,observed)) +
+    ggplot(subset(tmp, survey=="spr"), aes(year,observed)) +
     geom_point() +
     geom_line(aes(year,predict)) +
     geom_linerange(data=subset(tmp,year==max(year)),
@@ -82,12 +82,12 @@ si_aut <-
 
 # plot the survey length-distribution data over the actual survey length-distribution data
 ldist_spr <-
-    ggplot(subset(fit$catchdist.fleets,name == "ldist_spr") ,
+    ggplot(subset(fit$catchdist.fleets,name == "ldist.spr") ,
            aes(lower,predicted)) + geom_line() +
     geom_line(aes(lower,observed), color="gray") +
     facet_wrap(~year+step) + theme_bw() + 
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == "ldist_spr" & lower==min(lower)),y=Inf),
+                                 name == "ldist.spr" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
     ylab("Proportion") + xlab("Length (cm)") + ggtitle("Spring Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
@@ -95,12 +95,12 @@ ldist_spr <-
            strip.background = element_blank(), strip.text.x = element_blank()) 
 
 ldist_aut <-
-    ggplot(subset(fit$catchdist.fleets,name == "ldist_aut") ,
+    ggplot(subset(fit$catchdist.fleets,name == "ldist.aut") ,
            aes(lower,predicted)) + geom_line() +
     geom_line(aes(lower,observed),col="gray") +
     facet_wrap(~year+step) + theme_bw() + 
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == "ldist_aut" & lower==min(lower)),y=Inf),
+                                 name == "ldist.aut" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
     ylab("Proportion") + xlab("Length (cm)") + ggtitle("Autumn Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
@@ -110,12 +110,12 @@ ldist_aut <-
 
 # plot the model catchdistribution data over actual catchdistribution data
 ldist_catch <-
-    ggplot(subset(fit$catchdist.fleets,name == "ldist_comm"),
+    ggplot(subset(fit$catchdist.fleets,name == "ldist.comm"),
            aes(lower,predicted)) +
     geom_line(aes(lower,observed),col="gray") +
     facet_wrap(~year+step) + theme_bw() + geom_line() +
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == "ldist_comm" & lower==min(lower)),y=Inf),
+                                 name == "ldist.comm" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
     ylab("Proportion") + xlab("Length (cm)") + ggtitle("Catch Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
@@ -123,12 +123,12 @@ ldist_catch <-
            strip.background = element_blank(), strip.text.x = element_blank())
 
 ldist_discards <-
-    ggplot(subset(fit$catchdist.fleets,name == "ldist_discards"),
+    ggplot(subset(fit$catchdist.fleets,name == "ldist.discards"),
            aes(lower,predicted)) +
     geom_line(aes(lower,observed),col="gray") +
     facet_wrap(~year+step) + theme_bw() + geom_line() +
     geom_text(data=mutate(subset(fit$catchdist.fleets,
-                                 name == "ldist_discards" & lower==min(lower)),y=Inf),
+                                 name == "ldist.discards" & lower==min(lower)),y=Inf),
               aes(lower,y,label=year), vjust = 2,hjust = -1)+
     ylab("Proportion") + xlab("Length (cm)") + ggtitle("Discard Lengths") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
@@ -137,17 +137,17 @@ ldist_discards <-
 
 ages <- 
     fit$catchdist.fleets %>%
-    filter(name %in% c("aldist_spr", "aldist_aut", "aldist_comm")) %>%
+    filter(name %in% c("aldist.spr", "aldist.aut", "aldist.comm")) %>%
     group_by(name, year, step, age) %>%
     summarize(observed = sum(observed, na.rm=T),
               predicted = sum(predicted, na.rm=T)) %>%
     mutate(age = as.numeric(gsub("age", "", age)))
 
 aldist_spr <-
-    ggplot(data=filter(ages, name=="aldist_spr"), aes(x=age, y=predicted)) + 
+    ggplot(data=filter(ages, name=="aldist.spr"), aes(x=age, y=predicted)) + 
     geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
     facet_wrap(~year+step) + theme_bw() + 
-    geom_text(data=filter(ages, name == "aldist_spr" & age == max(age)),
+    geom_text(data=filter(ages, name == "aldist.spr" & age == max(age)),
               aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
     ylab("Proportion") + xlab("Age") + ggtitle("Spring Ages") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
@@ -155,10 +155,10 @@ aldist_spr <-
            strip.background = element_blank(), strip.text.x = element_blank()) 
 
 aldist_aut <-
-    ggplot(data=filter(ages, name=="aldist_aut"), aes(x=age, y=predicted)) + 
+    ggplot(data=filter(ages, name=="aldist.aut"), aes(x=age, y=predicted)) + 
     geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
     facet_wrap(~year+step) + theme_bw() + 
-    geom_text(data=filter(ages, name == "aldist_aut" & age == max(age)),
+    geom_text(data=filter(ages, name == "aldist.aut" & age == max(age)),
               aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
     ylab("Proportion") + xlab("Age") + ggtitle("Autumn Ages") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),
@@ -166,10 +166,10 @@ aldist_aut <-
            strip.background = element_blank(), strip.text.x = element_blank())
 
 aldist_catch <-
-    ggplot(data=filter(ages, name=="aldist_comm"), aes(x=age, y=predicted)) + 
+    ggplot(data=filter(ages, name=="aldist.comm"), aes(x=age, y=predicted)) + 
     geom_line() + geom_line(aes(x=age, y=observed), color="lightgray") +
     facet_wrap(~year+step) + theme_bw() + 
-    geom_text(data=filter(ages, name == "aldist_comm" & age == max(age)),
+    geom_text(data=filter(ages, name == "aldist.comm" & age == max(age)),
               aes(x=max(age)/(4/3), y=Inf, label=year), vjust = 1.5) +
     ylab("Proportion") + xlab("Age") + ggtitle("Catch Ages") +
     theme (axis.text.y = element_blank(), axis.ticks.y = element_blank(),

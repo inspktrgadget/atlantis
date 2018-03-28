@@ -45,7 +45,7 @@ gadgetfleet("Modelfiles/fleet", gd$dir, missingOkay=T) %>%
                   data = comm_landings[[1]]) %>%
     # gadget_update("totalfleet",
     #               name = "discards",
-    #               suitability = fleet_suit("discards", stocknames, "exponentiall50"),
+    #               suitability = fleet_suit("discards", stock, "exponentiall50"),
     #               data = discards[[1]]) %>%
     write.gadget.file(gd$dir)
 
