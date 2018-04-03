@@ -3,8 +3,8 @@ callGadget(s=1)
 
 read.gadget.parameters(sprintf("%s/params.out", gd$dir)) %>%
     init_params("linf", 130, 120, 135, 1) %>%
-    init_params("k", 0.15, 0.11, 0.196, 1) %>%
-    init_params("recl", 20, 20, 35, 1) %>%
+    init_params("k", 0.13, 0.11, 0.196, 1) %>%
+    init_params("recl", 20, 19, 35, 1) %>%
     init_params("bbin.mult", 1e4, 1, 1e8, 1) %>%
     init_params("bbin", 1e4, 1, 1e8, 1) %>%
     init_params("init.mult", 1, 1, 1e+04, 1) %>%

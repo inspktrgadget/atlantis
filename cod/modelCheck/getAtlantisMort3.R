@@ -37,7 +37,8 @@ yma_count <-
     is_fg_count %>%
     filter(count >= 1) %>%
     group_by(year, month, age) %>%
-    summarize(total = sum(count))
+    summarize(total = sum(count)) %>%
+    ungroup()
 
 # calculate z based on age structure, as in gadget
 z_data <- 

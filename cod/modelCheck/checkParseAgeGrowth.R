@@ -28,7 +28,8 @@ atl_sub <-
     is_fg_count %>%
     select(year, month, age, length, count) %>%
     group_by(year, month, age, length) %>%
-    summarize(count = sum(count))
+    summarize(count = sum(count)) %>%
+    ungroup()
 
 
 # compute growth parameters using nlm on functions in vbParams.R
@@ -44,11 +45,14 @@ nls_growth <- nls(length ~ vb(linf, k, t0, age), data=atl_sub,
 # distribute 2 year atlantis age groups to single year classes
 source("functions/calcGrowth.R")
 source("functions/parseAges.R")
-#source("cod/modelCheck/getAtlantisMort3.R")
-m_vals <- data.frame(age = 0:19, m = 0.338)
-# add mortality and parse ages based on m
+source("cod/modelCheck/getAtlantisMort3.R")
+z_vals <- data.frame(age = seq(0,18,2),
+                     z = c(0.31, 0.325, 0.45, 0.54, 0.6, 0.62,
+                           0.63, 0.63, 0.63, 0.01))
+
+# add mortality and parse ages based on z
 age_count <- 
-    left_join(is_fg_count, m_vals) %>%
+    left_join(is_fg_count, z_vals) %>%
     parseAges(.) %>%
     arrange(year, month, day, area, depth, age)
 
@@ -65,8 +69,8 @@ vbMin <-
 smooth_len <- 
     age_count %>% 
     filter(count >= 1) %>%
-    mutate(length = vb(linf=134, k=0.13, t0=0, 
-                       age = age + (month / 12))) %>%
+    mutate(length = vb(linf=130, k=0.13, t0=0, 
+                       age = age + (month / 13))) %>%
     # mutate(length = ifelse(age == 0, vb(linf, k, (t0), age),
     #                        vb(linf, k+0.01, t0, age))) %>%
     select(depth, area, year, month, day, group, cohort, weight, length, 
